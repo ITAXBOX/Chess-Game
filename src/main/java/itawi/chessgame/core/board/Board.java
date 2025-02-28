@@ -141,8 +141,10 @@ public class Board {
         }
 
         // Check if squares between king and rook are empty
-        String[] squaresToCheck = toPosition.equals("g1") || toPosition.equals("g8")
-                ? new String[]{"f1", "g1"} : new String[]{"c1", "d1"};
+        String[] squaresToCheck = toPosition.equals("c1")
+                ? new String[]{"b1", "c1", "d1"}
+                : new String[]{"b8", "c8", "d8"};
+
         for (String square : squaresToCheck) {
             if (board.get(square) != null) {
                 return false;

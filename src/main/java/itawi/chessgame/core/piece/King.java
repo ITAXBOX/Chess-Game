@@ -35,7 +35,10 @@ public class King extends Piece {
         for (int i = 0; i < 8; i++) {
             String newPosition = Utils.getPosition(currentX + dx[i], currentY + dy[i]);
             if (Utils.isValidPosition(newPosition)) {
-                possibleMoves.add(newPosition);
+                Piece target = board.get(newPosition);
+                if (target == null || !target.getColor().equals(this.getColor())) {
+                    possibleMoves.add(newPosition);
+                }
             }
         }
 
