@@ -2,13 +2,18 @@ package itawi.chessgame.core.board;
 
 import itawi.chessgame.core.piece.*;
 import itawi.chessgame.core.util.Utils;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
+@Setter
 public class Board {
     private final Map<String, Piece> board; // Maps positions (e.g., "a1") to pieces
+    private String enPassantTarget;
 
     public Board() {
         this.board = new HashMap<>();
@@ -83,6 +88,15 @@ public class Board {
         // Handle castling
         if (piece instanceof King && Math.abs(Utils.getCoordinates(fromPosition)[0] - Utils.getCoordinates(toPosition)[0]) == 2) {
             return performCastling(fromPosition, toPosition, currentTurn);
+        }
+
+        // Handle en passant capture
+        if (piece instanceof Pawn && toPosition.equals(enPassantTarget)) {
+            int[] toCoords = Utils.getCoordinates(toPosition);
+            // Captured pawn is behind the enPassantTarget
+            int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
+            String capturedPawnPosition = Utils.getPosition(toCoords[0], capturedY);
+            board.remove(capturedPawnPosition);
         }
 
         // Simulate the move to check if it leaves the king in check

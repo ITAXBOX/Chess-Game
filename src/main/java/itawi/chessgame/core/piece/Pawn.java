@@ -1,5 +1,6 @@
 package itawi.chessgame.core.piece;
 
+import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.enums.PieceType;
 import itawi.chessgame.core.util.Utils;
 import lombok.Setter;
@@ -54,6 +55,21 @@ public class Pawn extends Piece {
             Piece pieceAtRightCapture = board.get(rightCapture);
             if (pieceAtRightCapture != null && !pieceAtRightCapture.getColor().equals(this.getColor())) {
                 possibleMoves.add(rightCapture);
+            }
+        }
+
+        // En passant logic
+        String enPassantTarget = ((Board) board).getEnPassantTarget();
+        if (enPassantTarget != null) {
+            int[] targetCoords = Utils.getCoordinates(enPassantTarget);
+            // Check if the pawn is on the correct rank and adjacent file
+            boolean isCorrectRank = (this.getColor().equals("white") && currentY == 4) ||
+                                    (this.getColor().equals("black") && currentY == 3);
+            boolean isAdjacentFile = Math.abs(targetCoords[0] - currentX) == 1;
+            boolean isCorrectDirection = (this.getColor().equals("white") && targetCoords[1] == currentY + 1) ||
+                                         (this.getColor().equals("black") && targetCoords[1] == currentY - 1);
+            if (isCorrectRank && isAdjacentFile && isCorrectDirection) {
+                possibleMoves.add(enPassantTarget);
             }
         }
 

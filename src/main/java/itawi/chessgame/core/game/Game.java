@@ -6,6 +6,7 @@ import itawi.chessgame.core.util.Utils;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -31,6 +32,24 @@ public class Game {
 
         if (!moveSuccess) {
             return false; // Invalid move
+        }
+
+        // Update enPassantTarget after a pawn moves two squares
+        Piece movedPiece = board.getPieceAt(toPosition);
+        if (movedPiece instanceof Pawn) {
+            int[] fromCoords = Utils.getCoordinates(fromPosition);
+            int[] toCoords = Utils.getCoordinates(toPosition);
+            int deltaY = Math.abs(toCoords[1] - fromCoords[1]);
+            if (deltaY == 2) {
+                // Set the skipped square as enPassantTarget
+                int skippedY = (fromCoords[1] + toCoords[1]) / 2;
+                String enPassantSquare = Utils.getPosition(fromCoords[0], skippedY);
+                board.setEnPassantTarget(enPassantSquare);
+            } else {
+                board.setEnPassantTarget(null);
+            }
+        } else {
+            board.setEnPassantTarget(null);
         }
 
         // Switch turns
@@ -108,13 +127,20 @@ public class Game {
     }
 
     private boolean hasLegalMoves(Piece piece, String position) {
-        List<String> possibleMoves = piece.getPossibleMoves(board.getBoardState());
+        Map<String, Piece> currentBoard = board.getBoardState();
+        List<String> possibleMoves = piece.getPossibleMoves(currentBoard);
         for (String move : possibleMoves) {
-            if (board.movePiece(position, move, currentTurn)) {
-                return true; // Piece has at least one legal move
+            // Simulate the move
+            Map<String, Piece> simulatedBoard = new HashMap<>(currentBoard);
+            simulatedBoard.remove(position);
+            simulatedBoard.put(move, piece);
+
+            // Check if the king is in check after the move
+            if (!board.isKingInCheck(currentTurn, simulatedBoard)) {
+                return true;
             }
         }
-        return false; // Piece has no legal moves
+        return false;
     }
 
     // Find all pieces attacking the king
@@ -139,50 +165,45 @@ public class Game {
         return attackers;
     }
 
-    // Check if a piece can perform a specific action (e.g., capture or block)
-    private boolean canPiecePerformAction(String targetPosition, String color, Map<String, Piece> board) {
-        // Iterate through all pieces of the current player
-        for (Map.Entry<String, Piece> entry : board.entrySet()) {
+    private boolean canPiecePerformAction(String targetPosition, String color, Map<String, Piece> boardState) {
+        for (Map.Entry<String, Piece> entry : boardState.entrySet()) {
             Piece piece = entry.getValue();
-
-            // Skip pieces of the opposite color
-            if (!piece.getColor().equals(color)) {
+            String fromPosition = entry.getKey();
+            if (!piece.getColor().equals(color))
                 continue;
-            }
 
-            // Check if the piece can perform the action (e.g., capture or block)
-            if (piece.getPossibleMoves(board).contains(targetPosition)) {
-                return true; // Piece can perform the action
+            List<String> possibleMoves = piece.getPossibleMoves(boardState);
+            if (possibleMoves.contains(targetPosition)) {
+                // Simulate the move
+                Map<String, Piece> simulatedBoard = new HashMap<>(boardState);
+                simulatedBoard.remove(fromPosition);
+                simulatedBoard.put(targetPosition, piece);
+                if (!board.isKingInCheck(color, simulatedBoard)) {
+                    return true;
+                }
             }
         }
-
-        return false; // No piece can perform the action
+        return false;
     }
 
     // Check if the attack can be blocked (only for sliding pieces: rook, bishop, queen)
-    private boolean canBlockAttack(String kingPosition, String attackerPosition, String color, Map<String, Piece> board) {
+    private boolean canBlockAttack(String kingPosition, String attackerPosition, String color, Map<String, Piece> boardState) {
         int[] kingCoords = Utils.getCoordinates(kingPosition);
         int[] attackerCoords = Utils.getCoordinates(attackerPosition);
 
-        // Determine the direction of the attack
         int dx = Integer.compare(attackerCoords[0], kingCoords[0]);
         int dy = Integer.compare(attackerCoords[1], kingCoords[1]);
 
-        // Iterate through the squares between the king and the attacker
         int x = kingCoords[0] + dx;
         int y = kingCoords[1] + dy;
         while (x != attackerCoords[0] || y != attackerCoords[1]) {
             String square = Utils.getPosition(x, y);
-
-            // Check if any piece can move to this square to block the attack
-            if (canPiecePerformAction(square, color, board)) {
-                return true; // Attack can be blocked
+            if (canPiecePerformAction(square, color, boardState)) {
+                return true;
             }
-
             x += dx;
             y += dy;
         }
-
-        return false; // Attack cannot be blocked
+        return false;
     }
 }
