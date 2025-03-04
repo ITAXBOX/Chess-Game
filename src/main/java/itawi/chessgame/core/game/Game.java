@@ -48,6 +48,16 @@ public class Game {
             } else {
                 board.setEnPassantTarget(null);
             }
+
+            // Check for pawn promotion
+            int promotionRank = movedPiece.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
+            if (toCoords[1] == promotionRank) {
+                // Trigger promotion logic
+                System.out.println("Pawn promotion! Choose a piece (queen, rook, bishop, knight):");
+                // In a real game, you would wait for user input here
+                String chosenPieceType = "queen"; // Default to queen for now
+                promotePawn(toPosition, chosenPieceType);
+            }
         } else {
             board.setEnPassantTarget(null);
         }
@@ -205,5 +215,39 @@ public class Game {
             y += dy;
         }
         return false;
+    }
+
+    public boolean promotePawn(String position, String pieceType) {
+        Piece pawn = board.getPieceAt(position);
+        if (!(pawn instanceof Pawn)) {
+            return false; // No pawn at the given position
+        }
+
+        // Check if the pawn is on the promotion rank
+        int[] coords = Utils.getCoordinates(position);
+        int promotionRank = pawn.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
+        if (coords[1] != promotionRank) {
+            return false; // Pawn is not on the promotion rank
+        }
+
+        // Create the new piece based on the chosen type
+        Piece newPiece = createPromotionPiece(pawn.getColor(), position, pieceType);
+        if (newPiece == null) {
+            return false; // Invalid piece type
+        }
+
+        // Replace the pawn with the new piece
+        board.getBoardState().put(position, newPiece);
+        return true;
+    }
+
+    private Piece createPromotionPiece(String color, String position, String pieceType) {
+        return switch (pieceType.toLowerCase()) {
+            case "queen" -> new Queen(color, position);
+            case "rook" -> new Rook(color, position);
+            case "bishop" -> new Bishop(color, position);
+            case "knight" -> new Knight(color, position);
+            default -> null; // Invalid piece type
+        };
     }
 }
