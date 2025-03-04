@@ -15,11 +15,13 @@ public class Game {
     private final Board board;
     private String currentTurn; // "white" or "black"
     private boolean isGameOver;
+    private final List<Map<String, Piece>> boardStateHistory;
 
     public Game() {
         this.board = new Board();
         this.currentTurn = "white"; // White starts first
         this.isGameOver = false;
+        boardStateHistory = new ArrayList<>();
     }
 
     public boolean makeMove(String fromPosition, String toPosition) {
@@ -60,6 +62,18 @@ public class Game {
             }
         } else {
             board.setEnPassantTarget(null);
+        }
+
+        if (movedPiece instanceof Pawn || board.getPieceAt(toPosition) != null) {
+            boardStateHistory.clear();
+        }
+
+        boardStateHistory.add(new HashMap<>(board.getBoardState()));
+
+        // Check for perpetual draw (threefold repetition)
+        if (isPerpetualDraw()) {
+            System.out.println("Perpetual draw! The game is a draw due to threefold repetition.");
+            isGameOver = true;
         }
 
         // Switch turns
@@ -217,28 +231,27 @@ public class Game {
         return false;
     }
 
-    public boolean promotePawn(String position, String pieceType) {
+    public void promotePawn(String position, String pieceType) {
         Piece pawn = board.getPieceAt(position);
         if (!(pawn instanceof Pawn)) {
-            return false; // No pawn at the given position
+            return; // No pawn at the given position
         }
 
         // Check if the pawn is on the promotion rank
         int[] coords = Utils.getCoordinates(position);
         int promotionRank = pawn.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
         if (coords[1] != promotionRank) {
-            return false; // Pawn is not on the promotion rank
+            return; // Pawn is not on the promotion rank
         }
 
         // Create the new piece based on the chosen type
         Piece newPiece = createPromotionPiece(pawn.getColor(), position, pieceType);
         if (newPiece == null) {
-            return false; // Invalid piece type
+            return; // Invalid piece type
         }
 
         // Replace the pawn with the new piece
         board.getBoardState().put(position, newPiece);
-        return true;
     }
 
     private Piece createPromotionPiece(String color, String position, String pieceType) {
@@ -249,5 +262,20 @@ public class Game {
             case "knight" -> new Knight(color, position);
             default -> null; // Invalid piece type
         };
+    }
+
+    private boolean isPerpetualDraw() {
+        Map<String, Piece> currentBoardState = board.getBoardState();
+        int repetitionCount = 0;
+
+        // Count how many times the current board state has occurred
+        for (Map<String, Piece> boardState : boardStateHistory) {
+            if (boardState.equals(currentBoardState)) {
+                repetitionCount++;
+            }
+        }
+
+        // If the same position occurs three times, it's a perpetual draw
+        return repetitionCount >= 3;
     }
 }
