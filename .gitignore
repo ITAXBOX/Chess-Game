@@ -34,3 +34,8 @@ target/classes/static/w-pawn.png
 target/classes/static/w-queen.png
 target/classes/static/w-rook.png
 target/classes/static/b-bishop.png
+.idea/compiler.xml
+.idea/encodings.xml
+.idea/jarRepositories.xml
+.idea/misc.xml
+.idea/vcs.xml
