@@ -30,10 +30,42 @@ public class Game {
         }
 
         // Attempt to move the piece
-        boolean moveSuccess = board.movePiece(fromPosition, toPosition, currentTurn);
+        Piece piece = board.getPieceAt(fromPosition);
 
+        // Check if there is a piece at the starting position
+        if (piece == null) {
+            return false;
+        }
+
+        // Check if it's the correct player's turn
+        if (!piece.getColor().equals(currentTurn)) {
+            return false;
+        }
+
+        // Simulate the move to check if it would leave the king in check
+        Map<String, Piece> simulatedBoard = new HashMap<>();
+        for (Map.Entry<String, Piece> entry : board.getBoardState().entrySet()) {
+            Piece p = entry.getValue();
+            Piece copy = Utils.copyPiece(p);
+            simulatedBoard.put(entry.getKey(), copy);
+        }
+        Piece movingPiece = simulatedBoard.remove(fromPosition);
+        if (movingPiece != null) {
+            movingPiece.setPosition(toPosition);
+            simulatedBoard.put(toPosition, movingPiece);
+        }
+
+        // Check if the king would be in check after the move
+        if (board.isKingInCheck(currentTurn, simulatedBoard)) {
+            // Do NOT switch turn if move is illegal
+            return false; // Move would leave king in check
+        }
+
+        // Now actually perform the move on the real board
+        boolean moveSuccess = board.movePiece(fromPosition, toPosition, currentTurn);
         if (!moveSuccess) {
-            return false; // Invalid move
+            // Do NOT switch turn if move is illegal
+            return false; // Move failed for some other reason
         }
 
         // Update enPassantTarget after a pawn moves two squares
@@ -55,22 +87,16 @@ public class Game {
             int promotionRank = movedPiece.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
             if (toCoords[1] == promotionRank) {
                 // Handle pawn promotion
-                return handlePawnPromotion(toPosition);
+                handlePawnPromotion(toPosition);
             }
         } else {
             board.setEnPassantTarget(null);
         }
 
-        // Continue with regular move handling
-        return finalizeMoveAndCheckGameState();
-    }
-
-    // A new method to handle the final steps of a regular move
-    private boolean finalizeMoveAndCheckGameState() {
+        // Move was successful - update game state and switch turns
         if (board.getPieceAt(board.getLastMoveTo()) instanceof Pawn || board.wasCaptureMade()) {
             boardStateHistory.clear();
         }
-
         boardStateHistory.add(new HashMap<>(board.getBoardState()));
 
         // Check for perpetual draw (threefold repetition)
@@ -94,17 +120,13 @@ public class Game {
         return true;
     }
 
-    // A new method to handle the promotion process
-    private boolean handlePawnPromotion(String position) {
+    // A method to handle the promotion process
+    private void handlePawnPromotion(String position) {
         // In a real game with a UI, you would prompt the user to choose the piece
         // For now, let's use a default promotion to Queen
         // This should be replaced with actual user input in your frontend
         String chosenPieceType = "queen"; // Default to queen
-
         promotePawn(position, chosenPieceType);
-
-        // Continue with regular move handling after promotion
-        return finalizeMoveAndCheckGameState();
     }
 
     private boolean isCheckmate() {
@@ -267,7 +289,7 @@ public class Game {
         }
 
         // Replace the pawn with the new piece
-        board.getBoardState().put(position, newPiece);
+        board.getBoard().put(position, newPiece);
     }
 
     private Piece createPromotionPiece(String color, String position, String pieceType) {
@@ -295,4 +317,3 @@ public class Game {
         return repetitionCount >= 3;
     }
 }
-

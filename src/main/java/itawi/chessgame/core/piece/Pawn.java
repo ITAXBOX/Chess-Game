@@ -3,6 +3,7 @@ package itawi.chessgame.core.piece;
 import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.enums.PieceType;
 import itawi.chessgame.core.util.Utils;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.Map;
 @Setter
 public class Pawn extends Piece {
     private final int DIRECTION = this.getColor().equals("white") ? 1 : -1; // White moves up, black moves down
+    @Getter
     private boolean hasMoved;
 
     public Pawn(String color, String position) {

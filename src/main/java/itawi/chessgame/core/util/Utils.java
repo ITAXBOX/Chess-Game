@@ -1,5 +1,7 @@
 package itawi.chessgame.core.util;
 
+import itawi.chessgame.core.piece.*;
+
 public class Utils {
     public static int[] getCoordinates(String position) {
         if (position == null || position.length() != 2) {
@@ -30,5 +32,35 @@ public class Utils {
 
     public static boolean isValidPosition(int x, int y) {
         return x >= 0 && x <= 7 && y >= 0 && y <= 7;
+    }
+
+    // Deep copy a piece (for move simulation)
+    public static Piece copyPiece(Piece piece) {
+        if (piece == null) return null;
+        String color = piece.getColor();
+        String position = piece.getPosition();
+        switch (piece.getType()) {
+            case PAWN -> {
+                Pawn pawn = new Pawn(color, position);
+                pawn.setHasMoved(((Pawn) piece).isHasMoved());
+                return pawn;
+            }
+            case ROOK -> {
+                return new Rook(color, position);
+            }
+            case KNIGHT -> {
+                return new Knight(color, position);
+            }
+            case BISHOP -> {
+                return new Bishop(color, position);
+            }
+            case QUEEN -> {
+                return new Queen(color, position);
+            }
+            case KING -> {
+                return new King(color, position);
+            }
+            default -> throw new IllegalArgumentException("Unknown piece type");
+        }
     }
 }
