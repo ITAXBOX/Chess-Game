@@ -14,6 +14,9 @@ import java.util.Map;
 public class Board {
     private final Map<String, Piece> board; // Maps positions (e.g., "a1") to pieces
     private String enPassantTarget;
+    private String lastMoveFrom; // Track the last move's starting position
+    private String lastMoveTo; // Track the last move's ending position
+    private boolean captureMade; // Track if a capture was made in the last move
 
     public Board() {
         this.board = new HashMap<>();
@@ -85,9 +88,24 @@ public class Board {
             return false;
         }
 
+        // Reset capture made flag
+        captureMade = false;
+
         // Handle castling
         if (piece instanceof King && Math.abs(Utils.getCoordinates(fromPosition)[0] - Utils.getCoordinates(toPosition)[0]) == 2) {
-            return performCastling(fromPosition, toPosition, currentTurn);
+            boolean result = performCastling(fromPosition, toPosition, currentTurn);
+            if (result) {
+                // Update last move data for castling
+                lastMoveFrom = fromPosition;
+                lastMoveTo = toPosition;
+            }
+            return result;
+        }
+
+        // Check if there's a capture
+        Piece capturedPiece = getPieceAt(toPosition);
+        if (capturedPiece != null) {
+            captureMade = true;
         }
 
         // Handle en passant capture
@@ -97,6 +115,7 @@ public class Board {
             int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
             String capturedPawnPosition = Utils.getPosition(toCoords[0], capturedY);
             board.remove(capturedPawnPosition);
+            captureMade = true;
         }
 
         // Simulate the move to check if it leaves the king in check
@@ -113,6 +132,10 @@ public class Board {
         board.remove(fromPosition);
         board.put(toPosition, piece);
         piece.setPosition(toPosition);
+
+        // Update tracking information
+        lastMoveFrom = fromPosition;
+        lastMoveTo = toPosition;
 
         // Update hasMoved for pawns, rooks, and kings
         switch (piece) {
@@ -243,22 +266,6 @@ public class Board {
         throw new IllegalStateException("King not found for color: " + color);
     }
 
-    // Print the board for debugging
-    public void printBoard() {
-        for (int rank = 8; rank >= 1; rank--) {
-            for (char file = 'a'; file <= 'h'; file++) {
-                String position = file + String.valueOf(rank);
-                Piece piece = board.get(position);
-                if (piece != null) {
-                    System.out.print(piece.getType().toString().charAt(0) + " ");
-                } else {
-                    System.out.print(". ");
-                }
-            }
-            System.out.println();
-        }
-    }
-
     // Find the position of a specific piece on the board
     public String findPiecePosition(Piece targetPiece, Map<String, Piece> board) {
         for (Map.Entry<String, Piece> entry : board.entrySet()) {
@@ -267,5 +274,10 @@ public class Board {
             }
         }
         throw new IllegalStateException("Piece not found on the board: " + targetPiece);
+    }
+
+    // Check if a capture was made in the last move
+    public boolean wasCaptureMade() {
+        return captureMade;
     }
 }

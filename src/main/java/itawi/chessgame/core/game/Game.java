@@ -54,17 +54,20 @@ public class Game {
             // Check for pawn promotion
             int promotionRank = movedPiece.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
             if (toCoords[1] == promotionRank) {
-                // Trigger promotion logic
-                System.out.println("Pawn promotion! Choose a piece (queen, rook, bishop, knight):");
-                // In a real game, you would wait for user input here
-                String chosenPieceType = "queen"; // Default to queen for now
-                promotePawn(toPosition, chosenPieceType);
+                // Handle pawn promotion
+                return handlePawnPromotion(toPosition);
             }
         } else {
             board.setEnPassantTarget(null);
         }
 
-        if (movedPiece instanceof Pawn || board.getPieceAt(toPosition) != null) {
+        // Continue with regular move handling
+        return finalizeMoveAndCheckGameState();
+    }
+
+    // A new method to handle the final steps of a regular move
+    private boolean finalizeMoveAndCheckGameState() {
+        if (board.getPieceAt(board.getLastMoveTo()) instanceof Pawn || board.wasCaptureMade()) {
             boardStateHistory.clear();
         }
 
@@ -89,6 +92,19 @@ public class Game {
         }
 
         return true;
+    }
+
+    // A new method to handle the promotion process
+    private boolean handlePawnPromotion(String position) {
+        // In a real game with a UI, you would prompt the user to choose the piece
+        // For now, let's use a default promotion to Queen
+        // This should be replaced with actual user input in your frontend
+        String chosenPieceType = "queen"; // Default to queen
+
+        promotePawn(position, chosenPieceType);
+
+        // Continue with regular move handling after promotion
+        return finalizeMoveAndCheckGameState();
     }
 
     private boolean isCheckmate() {
@@ -279,3 +295,4 @@ public class Game {
         return repetitionCount >= 3;
     }
 }
+
