@@ -16,7 +16,9 @@ public class Pawn extends Piece {
 
     public Pawn(String color, String position) {
         super(color, position, PieceType.PAWN);
-        this.hasMoved = false;
+        // Initialize hasMoved based on starting position
+        this.hasMoved = !((color.equals("white") && position.charAt(1) == '2') ||
+                         (color.equals("black") && position.charAt(1) == '7'));
     }
 
     @Override
@@ -59,7 +61,11 @@ public class Pawn extends Piece {
         }
 
         // En passant logic
-        String enPassantTarget = ((Board) board).getEnPassantTarget();
+        String enPassantTarget = null;
+        if (board instanceof Board) {
+            enPassantTarget = ((Board) board).getEnPassantTarget();
+        }
+
         if (enPassantTarget != null) {
             int[] targetCoords = Utils.getCoordinates(enPassantTarget);
             // Check if the pawn is on the correct rank and adjacent file
