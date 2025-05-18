@@ -178,18 +178,43 @@ public class Board {
         }
 
         // Check if squares between king and rook are empty
-        String[] squaresToCheck = toPosition.equals("c1")
-                ? new String[]{"b1", "c1", "d1"}
-                : new String[]{"b8", "c8", "d8"};
-
-        for (String square : squaresToCheck) {
-            if (board.get(square) != null) {
-                return false;
+        switch (toPosition) {
+            case "g1" -> {
+                // King-side castling white
+                if (board.get("f1") != null) {
+                    return false;
+                }
+            }
+            case "g8" -> {
+                // King-side castling black
+                if (board.get("f8") != null) {
+                    return false;
+                }
+            }
+            case "c1" -> {
+                // Queen-side castling white
+                if (board.get("b1") != null || board.get("c1") != null || board.get("d1") != null) {
+                    return false;
+                }
+            }
+            default -> {
+                if (board.get("b8") != null || board.get("c8") != null || board.get("d8") != null) {
+                    return false;
+                }
             }
         }
 
+        // Check for the safety of the king's movement path
+        String[] safetyCheck = switch (toPosition) {
+            case "g1" -> new String[]{"e1", "f1", "g1"};
+            case "g8" -> new String[]{"e8", "f8", "g8"};
+            case "c1" -> new String[]{"e1", "d1", "c1"};
+            default ->  // c8
+                    new String[]{"e8", "d8", "c8"};
+        };
+
         // Check if king is in check or squares are under attack
-        if (isKingInCheck(currentTurn, board) || isSquareUnderAttack(currentTurn, squaresToCheck, board)) {
+        if (isKingInCheck(currentTurn, board) || isSquareUnderAttack(currentTurn, safetyCheck, board)) {
             return false;
         }
 
