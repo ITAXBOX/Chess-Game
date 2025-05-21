@@ -23,6 +23,13 @@ public class Game {
         this.isGameOver = false;
         boardStateHistory = new ArrayList<>();
     }
+    // Constructor for testing purposes
+    public Game(String currentTurn) {
+        this.board = new Board();
+        this.currentTurn = currentTurn;
+        this.isGameOver = false;
+        boardStateHistory = new ArrayList<>();
+    }
 
     public boolean makeMove(String fromPosition, String toPosition) {
         if (isGameOver) {
@@ -34,6 +41,11 @@ public class Game {
 
         // Check if there is a piece at the starting position
         if (piece == null) {
+            // Check for stalemate if there's no piece (could indicate no valid moves)
+            if (checkForStalemateCondition()) {
+                isGameOver = true;
+                System.out.println("Stalemate detected! The game is a draw.");
+            }
             return false;
         }
 
@@ -57,14 +69,22 @@ public class Game {
 
         // Check if the king would be in check after the move
         if (board.isKingInCheck(currentTurn, simulatedBoard)) {
-            // Do NOT switch turn if move is illegal
+            // Check for stalemate when a move fails due to king being in check
+            if (checkForStalemateCondition()) {
+                isGameOver = true;
+                System.out.println("Stalemate detected! The game is a draw.");
+            }
             return false; // Move would leave king in check
         }
 
         // Now actually perform the move on the real board
         boolean moveSuccess = board.movePiece(fromPosition, toPosition, currentTurn);
         if (!moveSuccess) {
-            // Do NOT switch turn if move is illegal
+            // Check for stalemate when a move fails for other reasons
+            if (checkForStalemateCondition()) {
+                isGameOver = true;
+                System.out.println("Stalemate detected! The game is a draw.");
+            }
             return false; // Move failed for some other reason
         }
 
@@ -170,6 +190,11 @@ public class Game {
     }
 
     private boolean isStalemate() {
+        // Check if the board has insufficient material for checkmate (automatic draw)
+        if (hasInsufficientMaterial()) {
+            return true;
+        }
+
         // Check if the current player has no legal moves and is not in check
         if (board.isKingInCheck(currentTurn, board.getBoardState())) {
             return false; // Player is in check, so it's not stalemate
@@ -186,6 +211,48 @@ public class Game {
         }
 
         return true; // Player has no legal moves and is not in check
+    }
+
+    /**
+     * Checks if the board has insufficient material to deliver checkmate.
+     * Cases of insufficient material:
+     * 1. King vs King
+     * 2. King + Bishop vs King
+     * 3. King + Knight vs King
+     *
+     * @return true if there is insufficient material for a checkmate
+     */
+    private boolean hasInsufficientMaterial() {
+        Map<String, Piece> pieces = board.getBoardState();
+
+        // Count pieces by type
+        int totalPieces = pieces.size();
+        int bishops = 0;
+        int knights = 0;
+        int otherPieces = 0; // pawns, queens, rooks
+
+        for (Piece piece : pieces.values()) {
+            if (piece instanceof Bishop) {
+                bishops++;
+            } else if (piece instanceof Knight) {
+                knights++;
+            } else if (!(piece instanceof King)) {
+                otherPieces++;
+            }
+        }
+
+        // Case 1: Only kings remain
+        if (totalPieces == 2) {
+            return true; // King vs King
+        }
+
+        // Case 2: King + Bishop vs King
+        if (totalPieces == 3 && bishops == 1 && knights == 0 && otherPieces == 0) {
+            return true;
+        }
+
+        // Case 3: King + Knight vs King
+        return totalPieces == 3 && knights == 1 && bishops == 0 && otherPieces == 0;
     }
 
     private boolean hasLegalMoves(Piece piece, String position) {
@@ -315,5 +382,9 @@ public class Game {
 
         // If the same position occurs three times, it's a perpetual draw
         return repetitionCount >= 3;
+    }
+
+    private boolean checkForStalemateCondition() {
+        return isStalemate();
     }
 }

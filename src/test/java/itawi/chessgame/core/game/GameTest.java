@@ -161,5 +161,104 @@ class GameTest {
         assertEquals("black", game.getCurrentTurn()); // Turn remains black
         assertInstanceOf(Pawn.class, game.getBoard().getPieceAt("f7"));
     }
+
+    @Test
+    void testStalemateScenario() {
+        // Create a new game with a clean setup
+        game = new Game("black");
+
+        // Clear the board completely
+        game.getBoard().getBoard().clear();
+
+        // Set up the stalemate position:
+        // - Black king at the top corner (a8)
+        // - White pawn at a7
+        // - White king at b6
+        // This is a classic stalemate where black has no legal moves but is not in check
+        game.getBoard().getBoard().put("a8", new King("black", "a8"));
+        game.getBoard().getBoard().put("a7", new Pawn("white", "a7"));
+        game.getBoard().getBoard().put("b6", new King("white", "b6"));
+
+        // Verify black king is not in check
+        assertFalse(game.getBoard().isKingInCheck("black", game.getBoard().getBoard()));
+
+        // Make any move attempt (which should fail since there are no legal moves)
+        boolean moveResult = game.makeMove("a8", "b8"); // This should fail as all moves are illegal
+        assertFalse(moveResult, "No moves should be possible for black king");
+
+        // The game should recognize stalemate and be over
+        assertTrue(game.isGameOver(), "Game should be over due to stalemate");
+
+        // Verify we're still in the same position (nothing changed)
+        assertInstanceOf(King.class, game.getBoard().getPieceAt("a8"));
+        assertEquals("black", game.getBoard().getPieceAt("a8").getColor());
+    }
+    @Test
+    void testStalemateKingVsKing() {
+        // Create a new game with black's turn
+        game = new Game("black");
+
+        // Clear the board completely
+        game.getBoard().getBoard().clear();
+
+        // Set up King vs King position (insufficient material - automatic draw)
+        game.getBoard().getBoard().put("e1", new King("white", "e1"));
+        game.getBoard().getBoard().put("e8", new King("black", "e8"));
+
+        // Attempt to make a move (any legal king move)
+        boolean moveResult = game.makeMove("e8", "e7");
+
+        // The move should succeed as it's legal
+        assertTrue(moveResult);
+
+        // But the game should be recognized as over due to insufficient material
+        assertTrue(game.isGameOver(), "Game should be over due to insufficient material (King vs King)");
+    }
+
+    @Test
+    void testStalemateKingVsKingAndBishop() {
+        // Create a new game with black's turn
+        game = new Game("black");
+
+        // Clear the board completely
+        game.getBoard().getBoard().clear();
+
+        // Set up King vs King and Bishop position (insufficient material - automatic draw)
+        game.getBoard().getBoard().put("e1", new King("white", "e1"));
+        game.getBoard().getBoard().put("e8", new King("black", "e8"));
+        game.getBoard().getBoard().put("c3", new Bishop("white", "c3"));
+
+        // Attempt to make a move (any legal king move)
+        boolean moveResult = game.makeMove("e8", "e7");
+
+        // The move should succeed as it's legal
+        assertTrue(moveResult);
+
+        // But the game should be recognized as over due to insufficient material
+        assertTrue(game.isGameOver(), "Game should be over due to insufficient material (King vs King and Bishop)");
+    }
+
+    @Test
+    void testStalemateKingVsKingAndKnight() {
+        // Create a new game with black's turn
+        game = new Game("black");
+
+        // Clear the board completely
+        game.getBoard().getBoard().clear();
+
+        // Set up King vs King and Knight position (insufficient material - automatic draw)
+        game.getBoard().getBoard().put("e1", new King("white", "e1"));
+        game.getBoard().getBoard().put("e8", new King("black", "e8"));
+        game.getBoard().getBoard().put("c3", new Knight("white", "c3"));
+
+        // Attempt to make a move (any legal king move)
+        boolean moveResult = game.makeMove("e8", "e7");
+
+        // The move should succeed as it's legal
+        assertTrue(moveResult);
+
+        // But the game should be recognized as over due to insufficient material
+        assertTrue(game.isGameOver(), "Game should be over due to insufficient material (King vs King and Knight)");
+    }
 }
 
