@@ -4,6 +4,7 @@ import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.piece.*;
 import itawi.chessgame.core.util.Utils;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,12 +17,15 @@ public class Game {
     private String currentTurn; // "white" or "black"
     private boolean isGameOver;
     private final List<Map<String, Piece>> boardStateHistory;
+    @Setter
+    private int halfMoveCounter; // Counter for the 50-move rule
 
     public Game() {
         this.board = new Board();
         this.currentTurn = "white"; // White starts first
         this.isGameOver = false;
         boardStateHistory = new ArrayList<>();
+        this.halfMoveCounter = 0; // Initialize the counter
     }
     // Constructor for testing purposes
     public Game(String currentTurn) {
@@ -29,6 +33,7 @@ public class Game {
         this.currentTurn = currentTurn;
         this.isGameOver = false;
         boardStateHistory = new ArrayList<>();
+        this.halfMoveCounter = 0; // Initialize the counter
     }
 
     public boolean makeMove(String fromPosition, String toPosition) {
@@ -116,17 +121,37 @@ public class Game {
         // Move was successful - update game state and switch turns
         if (board.getPieceAt(board.getLastMoveTo()) instanceof Pawn || board.wasCaptureMade()) {
             boardStateHistory.clear();
+            halfMoveCounter = 0; // Reset the counter when a pawn is moved or a capture is made
+        } else {
+            halfMoveCounter++; // Increment the counter for moves without pawn movement or capture
+
+            // Immediate check for fifty-move rule right after incrementing the counter
+            if (halfMoveCounter >= 100) { // 50 full moves = 100 half-moves
+                System.out.println("Fifty-move rule! The game is a draw.");
+                isGameOver = true;
+
+                // Add current board state to history before returning
+                boardStateHistory.add(new HashMap<>(board.getBoardState()));
+
+                // Switch turns before returning
+                currentTurn = currentTurn.equals("white") ? "black" : "white";
+
+                return true; // End the method here, as the game is over
+            }
         }
+
+        // Add current board state to history
         boardStateHistory.add(new HashMap<>(board.getBoardState()));
+
+        // Switch turns
+        currentTurn = currentTurn.equals("white") ? "black" : "white";
 
         // Check for perpetual draw (threefold repetition)
         if (isPerpetualDraw()) {
             System.out.println("Perpetual draw! The game is a draw due to threefold repetition.");
             isGameOver = true;
+            return true; // End the method here, as the game is over
         }
-
-        // Switch turns
-        currentTurn = currentTurn.equals("white") ? "black" : "white";
 
         // Check for checkmate or stalemate
         if (isCheckmate()) {

@@ -260,5 +260,30 @@ class GameTest {
         // But the game should be recognized as over due to insufficient material
         assertTrue(game.isGameOver(), "Game should be over due to insufficient material (King vs King and Knight)");
     }
+
+    @Test
+    void testFiftyMoveRule() {
+        // Clear the board
+        game.getBoard().getBoard().clear();
+
+        // Set up a simple position with kings and rooks to prevent automatic insufficient material draw
+        game.getBoard().getBoard().put("e1", new King("white", "e1"));
+        game.getBoard().getBoard().put("e8", new King("black", "e8"));
+        game.getBoard().getBoard().put("h1", new Rook("white", "h1"));
+        game.getBoard().getBoard().put("a8", new Rook("black", "a8"));
+
+        // Manually set the half-move counter to 99 (one move away from triggering the 50-move rule)
+        game.setHalfMoveCounter(99);
+
+        // Clear the board state history to prevent threefold repetition detection
+        game.getBoardStateHistory().clear();
+
+        // Make one move to reach 100 half-moves
+        assertTrue(game.makeMove("e1", "d1"));
+        assertEquals(100, game.getHalfMoveCounter());
+
+        // Game should be over due to the 50-move rule
+        assertTrue(game.isGameOver(), "Game should be over due to the 50-move rule");
+    }
 }
 

@@ -119,6 +119,20 @@ public class King extends Piece {
                 continue;
             }
 
+            // Special case for opponent kings
+            if (piece instanceof King) {
+                // Manual check if the opponent king can attack this king
+                int[] kingCoords = Utils.getCoordinates(kingPosition);
+                int[] oppKingCoords = Utils.getCoordinates(piece.getPosition());
+                int dx = Math.abs(kingCoords[0] - oppKingCoords[0]);
+                int dy = Math.abs(kingCoords[1] - oppKingCoords[1]);
+                // Kings can attack in a 1-square radius
+                if (dx <= 1 && dy <= 1 && (dx > 0 || dy > 0)) {
+                    return true;
+                }
+                continue;
+            }
+
             // Check if the piece can attack the king's position
             if (piece.getPossibleMoves(board).contains(kingPosition)) {
                 return true; // King is in check
@@ -136,6 +150,22 @@ public class King extends Piece {
 
             // Skip pieces of the same color
             if (piece.getColor().equals(this.getColor())) {
+                continue;
+            }
+
+            // Special case for opponent kings
+            if (piece instanceof King) {
+                // Manual check if the opponent king can attack any of the squares
+                int[] oppKingCoords = Utils.getCoordinates(piece.getPosition());
+                for (String square : squares) {
+                    int[] squareCoords = Utils.getCoordinates(square);
+                    int dx = Math.abs(squareCoords[0] - oppKingCoords[0]);
+                    int dy = Math.abs(squareCoords[1] - oppKingCoords[1]);
+                    // Kings can attack in a 1-square radius
+                    if (dx <= 1 && dy <= 1 && (dx > 0 || dy > 0)) {
+                        return true; // Square is under attack by the king
+                    }
+                }
                 continue;
             }
 
