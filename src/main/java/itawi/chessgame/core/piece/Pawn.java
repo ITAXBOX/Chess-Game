@@ -20,7 +20,7 @@ public class Pawn extends Piece {
         super(color, position, PieceType.PAWN);
         // Initialize hasMoved based on starting position
         this.hasMoved = !((color.equals("white") && position.charAt(1) == '2') ||
-                         (color.equals("black") && position.charAt(1) == '7'));
+                (color.equals("black") && position.charAt(1) == '7'));
     }
 
     @Override
@@ -62,20 +62,30 @@ public class Pawn extends Piece {
             }
         }
 
-        // En passant logic
-        String enPassantTarget = null;
-        if (board instanceof Board) {
-            enPassantTarget = ((Board) board).getEnPassantTarget();
-        }
+        // En passant logic is handled in the Board version of getPossibleMoves
+        return possibleMoves;
+    }
 
+    @Override
+    public List<String> getPossibleMoves(Board boardObj) {
+        // Get the basic moves
+        List<String> possibleMoves = getPossibleMoves(boardObj.getBoardState());
+
+        // Add en passant moves
+        String enPassantTarget = boardObj.getEnPassantTarget();
         if (enPassantTarget != null) {
+
+            int[] currentCoords = Utils.getCoordinates(this.getPosition());
+            int currentX = currentCoords[0];
+            int currentY = currentCoords[1];
             int[] targetCoords = Utils.getCoordinates(enPassantTarget);
+
             // Check if the pawn is on the correct rank and adjacent file
             boolean isCorrectRank = (this.getColor().equals("white") && currentY == 4) ||
-                                    (this.getColor().equals("black") && currentY == 3);
+                    (this.getColor().equals("black") && currentY == 3);
             boolean isAdjacentFile = Math.abs(targetCoords[0] - currentX) == 1;
             boolean isCorrectDirection = (this.getColor().equals("white") && targetCoords[1] == currentY + 1) ||
-                                         (this.getColor().equals("black") && targetCoords[1] == currentY - 1);
+                    (this.getColor().equals("black") && targetCoords[1] == currentY - 1);
             if (isCorrectRank && isAdjacentFile && isCorrectDirection) {
                 possibleMoves.add(enPassantTarget);
             }

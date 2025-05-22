@@ -40,7 +40,6 @@ public class Game {
         if (isGameOver) {
             return false; // Game is already over
         }
-
         // Attempt to move the piece
         Piece piece = board.getPieceAt(fromPosition);
 
@@ -54,8 +53,19 @@ public class Game {
             return false;
         }
 
+
         // Check if it's the correct player's turn
         if (!piece.getColor().equals(currentTurn)) {
+            return false;
+        }
+
+        // Check if en passant
+        boolean isEnPassant = piece instanceof Pawn && toPosition.equals(board.getEnPassantTarget());
+
+        // Get valid moves directly from the piece using the Board object
+        List<String> validMoves = piece.getPossibleMoves(board);
+
+        if (!validMoves.contains(toPosition)) {
             return false;
         }
 
@@ -71,6 +81,14 @@ public class Game {
         Piece movingPiece = simulatedBoard.get(fromPosition);
         if (movingPiece == null) {
             return false; // Can't move a non-existent piece
+        }
+
+        // If en passant, also remove the captured pawn from simulation
+        if (isEnPassant) {
+            int[] toCoords = Utils.getCoordinates(toPosition);
+            int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
+            String capturedPawnPosition = Utils.getPosition(toCoords[0], capturedY);
+            simulatedBoard.remove(capturedPawnPosition);
         }
 
         simulatedBoard.remove(fromPosition);

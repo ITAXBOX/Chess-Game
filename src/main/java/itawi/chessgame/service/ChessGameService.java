@@ -2,7 +2,9 @@ package itawi.chessgame.service;
 
 import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.game.Game;
+import itawi.chessgame.core.piece.Pawn;
 import itawi.chessgame.core.piece.Piece;
+import itawi.chessgame.core.util.Utils;
 import itawi.chessgame.dto.PieceDTO;
 import lombok.Getter;
 import org.springframework.stereotype.Service;
@@ -38,7 +40,8 @@ public class ChessGameService {
             return List.of(); // No valid moves for empty square or opponent's piece
         }
 
-        return piece.getPossibleMoves(currentGame.getBoard().getBoardState()).stream()
+        // Pass the actual Board instance instead of just the board state map
+        return piece.getPossibleMoves(currentGame.getBoard()).stream()
                 .filter(move -> isLegalMove(position, move))
                 .toList();
     }
@@ -126,6 +129,18 @@ public class ChessGameService {
         }
         // If a square is already selected, attempt to move there
         else {
+            // Store the board state before the move to detect captured pieces
+            Map<String, Piece> boardStateBefore = new HashMap<>(currentGame.getBoard().getBoardState());
+
+            // Check if this might be an en passant move
+            boolean isPotentialEnPassant = false;
+            Piece movingPiece = currentGame.getBoard().getPieceAt(selectedPosition);
+            String enPassantTarget = currentGame.getBoard().getEnPassantTarget();
+
+            if (movingPiece instanceof Pawn && position.equals(enPassantTarget)) {
+                isPotentialEnPassant = true;
+            }
+
             boolean moveSuccess = makeMove(selectedPosition, position);
             response.put("moveSuccess", moveSuccess);
             response.put("selectedPosition", null); // Clear selection after move attempt
@@ -133,6 +148,31 @@ public class ChessGameService {
             if (moveSuccess) {
                 response.put("newBoardState", getBoardAsPieceDTOs());
                 response.put("gameStatus", getGameStatus());
+
+                // Check for captured pieces by comparing board states
+                if (isPotentialEnPassant) {
+                    // For en passant, the captured pawn is not on the destination square
+                    int[] posCoords = Utils.getCoordinates(position);
+                    int capturedY = movingPiece.getColor().equals("white") ? posCoords[1] - 1 : posCoords[1] + 1;
+                    String capturedPawnPosition = Utils.getPosition(posCoords[0], capturedY);
+
+                    Piece capturedPawn = boardStateBefore.get(capturedPawnPosition);
+                    if (capturedPawn != null) {
+                        Map<String, String> capturedPieceInfo = new HashMap<>();
+                        capturedPieceInfo.put("type", capturedPawn.getType().toString());
+                        capturedPieceInfo.put("color", capturedPawn.getColor());
+                        response.put("capturedPiece", capturedPieceInfo);
+                    }
+                } else {
+                    // Normal capture check
+                    Piece capturedPiece = boardStateBefore.get(position);
+                    if (capturedPiece != null) {
+                        Map<String, String> capturedPieceInfo = new HashMap<>();
+                        capturedPieceInfo.put("type", capturedPiece.getType().toString());
+                        capturedPieceInfo.put("color", capturedPiece.getColor());
+                        response.put("capturedPiece", capturedPieceInfo);
+                    }
+                }
 
                 // Check for pawn promotion
                 Piece movedPiece = currentGame.getBoard().getPieceAt(position);
@@ -150,5 +190,4 @@ public class ChessGameService {
         return response;
     }
 }
-
 

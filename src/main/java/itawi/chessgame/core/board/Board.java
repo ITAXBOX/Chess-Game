@@ -82,14 +82,31 @@ public class Board {
             return false;
         }
 
-        // Check if the move is in the list of possible moves
-        List<String> possibleMoves = piece.getPossibleMoves(board);
-        if (!possibleMoves.contains(toPosition)) {
-            return false;
+        // Check if this is an en passant move
+        boolean isEnPassantMove = piece instanceof Pawn && toPosition.equals(enPassantTarget);
+
+        // Special handling for validating en passant moves
+        if (isEnPassantMove) {
+            // En passant moves must be validated using the Board object, not just the map
+            if (!piece.getPossibleMoves(this).contains(toPosition)) {
+                return false;
+            }
+        } else {
+            // For regular moves, check against standard move list
+            List<String> possibleMoves = piece.getPossibleMoves(board);
+            if (!possibleMoves.contains(toPosition)) {
+                return false;
+            }
         }
 
         // Reset capture made flag
         captureMade = false;
+
+        // Store current en passant target before resetting
+        String currentEnPassantTarget = enPassantTarget;
+
+        // Reset en passant target by default (will be set again if this is a double pawn move)
+        enPassantTarget = null;
 
         // Handle castling
         if (piece instanceof King && Math.abs(Utils.getCoordinates(fromPosition)[0] - Utils.getCoordinates(toPosition)[0]) == 2) {
@@ -102,20 +119,26 @@ public class Board {
             return result;
         }
 
-        // Check if there's a capture
+        // Check if there's a capture at destination
         Piece capturedPiece = getPieceAt(toPosition);
         if (capturedPiece != null) {
             captureMade = true;
         }
 
-        // Handle en passant capture
-        if (piece instanceof Pawn && toPosition.equals(enPassantTarget)) {
+        // Handle en passant capture - captured pawn is NOT at the destination
+        if (isEnPassantMove) {
             int[] toCoords = Utils.getCoordinates(toPosition);
-            // Captured pawn is behind the enPassantTarget
+            // The captured pawn is on the same file as the destination but on the starting rank of the capturing pawn
             int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
             String capturedPawnPosition = Utils.getPosition(toCoords[0], capturedY);
-            board.remove(capturedPawnPosition);
-            captureMade = true;
+
+            Piece capturedPawn = board.get(capturedPawnPosition);
+
+            if (capturedPawn instanceof Pawn &&
+                    !capturedPawn.getColor().equals(piece.getColor())) {
+                board.remove(capturedPawnPosition);
+                captureMade = true;
+            }
         }
 
         // Simulate the move to check if it leaves the king in check
@@ -123,8 +146,18 @@ public class Board {
         simulatedBoard.remove(fromPosition);
         simulatedBoard.put(toPosition, piece);
 
+        // If this is an en passant move, also remove the captured pawn in simulation
+        if (isEnPassantMove) {
+            int[] toCoords = Utils.getCoordinates(toPosition);
+            int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
+            String capturedPawnPosition = Utils.getPosition(toCoords[0], capturedY);
+            simulatedBoard.remove(capturedPawnPosition);
+        }
+
         // Check if the king is in check after the move
         if (isKingInCheck(piece.getColor(), simulatedBoard)) {
+            // Restore en passant target if move is invalid
+            enPassantTarget = currentEnPassantTarget;
             return false; // Move is invalid because it leaves the king in check
         }
 
@@ -132,6 +165,15 @@ public class Board {
         board.remove(fromPosition);
         board.put(toPosition, piece);
         piece.setPosition(toPosition);
+
+        // Check for pawn double move to set en passant target
+        if (piece instanceof Pawn && Math.abs(Utils.getCoordinates(fromPosition)[1] - Utils.getCoordinates(toPosition)[1]) == 2) {
+            // Set the en passant target to the square behind the pawn
+            int[] fromCoords = Utils.getCoordinates(fromPosition);
+            int[] toCoords = Utils.getCoordinates(toPosition);
+            int enPassantY = (fromCoords[1] + toCoords[1]) / 2; // The square in between from and to
+            enPassantTarget = Utils.getPosition(toCoords[0], enPassantY);
+        }
 
         // Update tracking information
         lastMoveFrom = fromPosition;

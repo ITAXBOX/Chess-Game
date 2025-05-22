@@ -1,5 +1,6 @@
 package itawi.chessgame.core.piece;
 
+import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.enums.PieceType;
 import itawi.chessgame.core.util.Utils;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,12 @@ public abstract class Piece {
     private PieceType type;
 
     public abstract List<String> getPossibleMoves(Map<String, Piece> board);
+
+    // Overloaded method that accepts a Board instead of just a Map
+    public List<String> getPossibleMoves(Board board) {
+        // By default, just call the Map version with the board state
+        return getPossibleMoves(board.getBoardState());
+    }
 
     protected List<String> getMovesInDirection(int dx, int dy, Map<String, Piece> board) {
         List<String> possibleMoves = new ArrayList<>();
