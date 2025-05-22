@@ -66,20 +66,32 @@ public class Game {
             Piece copy = Utils.copyPiece(p);
             simulatedBoard.put(entry.getKey(), copy);
         }
-        Piece movingPiece = simulatedBoard.remove(fromPosition);
-        if (movingPiece != null) {
-            movingPiece.setPosition(toPosition);
-            simulatedBoard.put(toPosition, movingPiece);
+
+        // Make sure we have a valid piece to move in the simulation
+        Piece movingPiece = simulatedBoard.get(fromPosition);
+        if (movingPiece == null) {
+            return false; // Can't move a non-existent piece
         }
 
-        // Check if the king would be in check after the move
-        if (board.isKingInCheck(currentTurn, simulatedBoard)) {
-            // Check for stalemate when a move fails due to king being in check
-            if (checkForStalemateCondition()) {
-                isGameOver = true;
-                System.out.println("Stalemate detected! The game is a draw.");
+        simulatedBoard.remove(fromPosition);
+        movingPiece.setPosition(toPosition);
+        simulatedBoard.put(toPosition, movingPiece);
+
+        // Verify the king is still on the board before checking if it's in check
+        try {
+            // Check if the king would be in check after the move
+            if (board.isKingInCheck(currentTurn, simulatedBoard)) {
+                // Check for stalemate when a move fails due to king being in check
+                if (checkForStalemateCondition()) {
+                    isGameOver = true;
+                    System.out.println("Stalemate detected! The game is a draw.");
+                }
+                return false; // Move would leave king in check
             }
-            return false; // Move would leave king in check
+        } catch (IllegalStateException e) {
+            // If king not found, this is likely an invalid move
+            System.out.println("Invalid move: " + e.getMessage());
+            return false;
         }
 
         // Now actually perform the move on the real board
