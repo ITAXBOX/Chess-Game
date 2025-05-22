@@ -193,6 +193,7 @@ class GameTest {
         assertInstanceOf(King.class, game.getBoard().getPieceAt("a8"));
         assertEquals("black", game.getBoard().getPieceAt("a8").getColor());
     }
+
     @Test
     void testStalemateKingVsKing() {
         // Create a new game with black's turn
@@ -284,6 +285,97 @@ class GameTest {
 
         // Game should be over due to the 50-move rule
         assertTrue(game.isGameOver(), "Game should be over due to the 50-move rule");
+    }
+
+    @Test
+    void testThreefoldRepetitionDraw() {
+        // Create a new game with default setup
+        Game game = new Game();
+
+        // Clear the board state history to start fresh
+        game.getBoardStateHistory().clear();
+
+        // Make some initial moves to clear some space
+        assertTrue(game.makeMove("e2", "e4"), "Initial pawn move should be valid");
+        assertTrue(game.makeMove("e7", "e5"), "Initial pawn move should be valid");
+
+        // 1. Knight out and back
+        assertTrue(game.makeMove("g1", "f3"), "Knight move out should be valid");
+        assertTrue(game.makeMove("g8", "f6"), "Knight move out should be valid");
+        assertTrue(game.makeMove("f3", "g1"), "Knight move back should be valid");
+        assertTrue(game.makeMove("f6", "g8"), "Knight move back should be valid");
+
+        // Check game is not over after first repetition
+        assertFalse(game.isGameOver(), "Game should not be over after first repetition");
+
+        // 2. Repeat the sequence
+        assertTrue(game.makeMove("g1", "f3"), "Knight move out should be valid");
+        assertTrue(game.makeMove("g8", "f6"), "Knight move out should be valid");
+        assertTrue(game.makeMove("f3", "g1"), "Knight move back should be valid");
+        assertTrue(game.makeMove("f6", "g8"), "Knight move back should be valid");
+
+        // Game should be over due to threefold repetition after 2nd sequence completes
+        assertTrue(game.isGameOver(), "Game should be over due to threefold repetition");
+
+        // Verify no more moves can be made
+        assertFalse(game.makeMove("g1", "f3"), "No moves should be allowed after game ends");
+    }
+
+    @Test
+    void testEnPassantSequenceWhiteCapture() {
+        // Create a new game with default setup
+        Game game = new Game();
+
+        // Execute the move sequence: 1.d4 a5 2.d5 e5
+        assertTrue(game.makeMove("d2", "d4"), "First move should be valid");
+        assertTrue(game.makeMove("a7", "a5"), "Second move should be valid");
+        assertTrue(game.makeMove("d4", "d5"), "Third move should be valid");
+        assertTrue(game.makeMove("e7", "e5"), "Fourth move should be valid");
+
+        // Now white should be able to capture black's e-pawn via en passant with d5xe6
+        String enPassantTarget = game.getBoard().getEnPassantTarget();
+        assertEquals("e6", enPassantTarget, "En passant target should be e6");
+
+        // Execute the en passant capture
+        assertTrue(game.makeMove("d5", "e6"), "En passant capture should be valid");
+
+        // Verify the white pawn moved to e6
+        Piece capturedPawn = game.getBoard().getPieceAt("e6");
+        assertNotNull(capturedPawn, "There should be a piece at e6");
+        assertEquals("white", capturedPawn.getColor(), "The piece should be white");
+        assertInstanceOf(Pawn.class, capturedPawn, "The piece should be a pawn");
+
+        // Verify the black pawn was captured (removed from e5)
+        assertNull(game.getBoard().getPieceAt("e5"), "The black pawn should be captured");
+    }
+
+    @Test
+    void testEnPassantSequenceBlackCapture() {
+        // Create a new game with default setup
+        Game game = new Game();
+
+        // Execute the move sequence: 1.d4 a5 2.d5 a4 3.b4
+        assertTrue(game.makeMove("d2", "d4"), "First move should be valid");
+        assertTrue(game.makeMove("a7", "a5"), "Second move should be valid");
+        assertTrue(game.makeMove("d4", "d5"), "Third move should be valid");
+        assertTrue(game.makeMove("a5", "a4"), "Fourth move should be valid");
+        assertTrue(game.makeMove("b2", "b4"), "Fifth move should be valid");
+
+        // Verify en passant target is set correctly
+        String enPassantTarget = game.getBoard().getEnPassantTarget();
+        assertEquals("b3", enPassantTarget, "En passant target should be b3");
+
+        // Black performs en passant capture with a4xb3
+        assertTrue(game.makeMove("a4", "b3"), "En passant capture should be valid");
+
+        // Verify the black pawn moved to b3
+        Piece pawnAtB3 = game.getBoard().getPieceAt("b3");
+        assertNotNull(pawnAtB3, "There should be a piece at b3");
+        assertEquals("black", pawnAtB3.getColor(), "The piece should be black");
+        assertInstanceOf(Pawn.class, pawnAtB3, "The piece should be a pawn");
+
+        // Verify the white pawn was captured (removed from b4)
+        assertNull(game.getBoard().getPieceAt("b4"), "The white pawn should be captured");
     }
 }
 

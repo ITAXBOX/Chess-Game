@@ -103,6 +103,12 @@ public class ChessGameService {
         if (isGameOver()) {
             if (inCheck) {
                 status.put("result", (currentPlayer.equals("white") ? "Black" : "White") + " wins by checkmate");
+            } else if (currentGame.isPerpetualDraw()) {
+                status.put("result", "Perpetual draw! The game is a draw due to threefold repetition");
+            } else if (currentGame.getHalfMoveCounter() >= 100) {
+                status.put("result", "Fifty-move rule! The game is a draw");
+            } else if (currentGame.hasInsufficientMaterial()) {
+                status.put("result", "Draw due to insufficient material");
             } else {
                 status.put("result", "Draw by stalemate");
             }

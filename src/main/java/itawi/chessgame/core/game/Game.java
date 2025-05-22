@@ -277,7 +277,7 @@ public class Game {
      *
      * @return true if there is insufficient material for a checkmate
      */
-    private boolean hasInsufficientMaterial() {
+    public boolean hasInsufficientMaterial() {
         Map<String, Piece> pieces = board.getBoardState();
 
         // Count pieces by type
@@ -424,7 +424,7 @@ public class Game {
         };
     }
 
-    private boolean isPerpetualDraw() {
+    public boolean isPerpetualDraw() {
         Map<String, Piece> currentBoardState = board.getBoardState();
         int repetitionCount = 0;
 
