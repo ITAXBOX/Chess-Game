@@ -85,14 +85,6 @@ public class ChessGameService {
                 .toList();
     }
 
-    public List<String> getHighlightedSquares(String position) {
-        Piece piece = currentGame.getBoard().getPieceAt(position);
-        if (piece == null || !piece.getColor().equals(getCurrentTurn())) {
-            return List.of();
-        }
-        return getValidMovesForPiece(position);
-    }
-
     public Map<String, Object> getGameStatus() {
         Map<String, Object> status = new HashMap<>();
         status.put("currentTurn", getCurrentTurn());
@@ -158,4 +150,5 @@ public class ChessGameService {
         return response;
     }
 }
+
 

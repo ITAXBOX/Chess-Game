@@ -32,32 +32,6 @@ public class ChessGameController {
         return ResponseEntity.ok(chessGameService.getGameStatus());
     }
 
-    @GetMapping("/valid-moves/{position}")
-    public ResponseEntity<List<String>> getValidMoves(@PathVariable String position) {
-        return ResponseEntity.ok(chessGameService.getValidMovesForPiece(position));
-    }
-
-    @GetMapping("/highlighted-squares/{position}")
-    public ResponseEntity<List<String>> getHighlightedSquares(@PathVariable String position) {
-        return ResponseEntity.ok(chessGameService.getHighlightedSquares(position));
-    }
-
-    @PostMapping("/move")
-    public ResponseEntity<Map<String, Object>> makeMove(@RequestBody Map<String, String> moveRequest) {
-        String from = moveRequest.get("from");
-        String to = moveRequest.get("to");
-
-        boolean success = chessGameService.makeMove(from, to);
-
-        Map<String, Object> response = Map.of(
-                "success", success,
-                "board", chessGameService.getBoardAsPieceDTOs(),
-                "gameStatus", chessGameService.getGameStatus()
-        );
-
-        return ResponseEntity.ok(response);
-    }
-
     @PostMapping("/promote")
     public ResponseEntity<Map<String, Object>> promotePawn(@RequestBody Map<String, String> promotionRequest) {
         String position = promotionRequest.get("position");
