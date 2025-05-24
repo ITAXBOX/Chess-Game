@@ -76,122 +76,16 @@
             <div id="game-result" class="game-result hidden"></div>
         </div>
     </div>
-
-    <!-- Debug console for troubleshooting -->
-    <div class="debug-panel">
-        <div class="debug-header">
-            <h3>Debug Console</h3>
-            <button id="toggle-debug" class="btn toggle-btn">Hide</button>
-        </div>
-        <div id="debug-output" class="debug-output"></div>
-    </div>
 </div>
 
 <script>
-    // Add a debug function
-    function debugLog(message) {
-        const debugOutput = document.getElementById('debug-output');
-        if (debugOutput) {
-            const logEntry = document.createElement('div');
-            logEntry.textContent = `${new Date().toLocaleTimeString()}: ${message}`;
-            debugOutput.appendChild(logEntry);
-            debugOutput.scrollTop = debugOutput.scrollHeight;
-            console.log(message);
-        }
-    }
-
-    // Toggle debug console
-    document.getElementById('toggle-debug').addEventListener('click', function() {
-        const debugOutput = document.getElementById('debug-output');
-        const toggleBtn = document.getElementById('toggle-debug');
-
-        if (debugOutput.style.display === 'none') {
-            debugOutput.style.display = 'block';
-            toggleBtn.textContent = 'Hide';
-        } else {
-            debugOutput.style.display = 'none';
-            toggleBtn.textContent = 'Show';
-        }
-    });
-
-    debugLog("Page loaded");
-
-    // Function to add a move to the history
-    function addMoveToHistory(notation) {
-        const movesList = document.getElementById('moves-list');
-        if (!movesList) {
-            debugLog("Error: moves-list element not found");
-            return;
-        }
-        const moveItem = document.createElement('div');
-        moveItem.className = 'move-item';
-        moveItem.textContent = notation;
-        movesList.appendChild(moveItem);
-        movesList.scrollTop = movesList.scrollHeight;
-        debugLog(`Move added to history: ${notation}`);
-    }
-
-    // Function to add a captured piece
-    function addCapturedPiece(piece, color) {
-        const containerId = `${color.toLowerCase()}-captured`;
-        const container = document.getElementById(containerId);
-        if (!container) {
-            debugLog(`Error: ${containerId} element not found`);
-            return;
-        }
-
-        // Convert piece type to lowercase for consistency
-        const pieceType = piece.toLowerCase();
-        const pieceColor = color.toLowerCase();
-        const pieceKey = `${pieceColor}-${pieceType}`;
-
-        // Check if this piece type already exists in captured pieces
-        const existingPieceGroup = container.querySelector(`.piece-group[data-piece="${pieceKey}"]`);
-
-        if (existingPieceGroup) {
-            // Increment counter if piece already exists
-            const counter = existingPieceGroup.querySelector('.piece-counter');
-            if (counter) {
-                const count = parseInt(counter.textContent) + 1;
-                counter.textContent = count;
-                debugLog(`Incremented captured ${pieceColor} ${pieceType} count to ${count}`);
-            }
-        } else {
-            // Create new piece group with image and counter
-            const pieceGroup = document.createElement('div');
-            pieceGroup.className = 'piece-group';
-            pieceGroup.dataset.piece = pieceKey;
-
-            const pieceElement = document.createElement('img');
-            pieceElement.src = `/${color[0]}-${pieceType}.png`;
-            pieceElement.alt = pieceType;
-            pieceElement.className = 'captured-piece';
-
-            const counterElement = document.createElement('span');
-            counterElement.className = 'piece-counter';
-            counterElement.textContent = '1';
-
-            pieceGroup.appendChild(pieceElement);
-            pieceGroup.appendChild(counterElement);
-            container.appendChild(pieceGroup);
-
-            debugLog(`Added new captured piece: ${pieceType} (${pieceColor})`);
-        }
-    }
-
     // Check if the new game button exists
     window.addEventListener('DOMContentLoaded', () => {
-        debugLog("DOM fully loaded");
-
-        // No more testing code here
-
         const newGameBtn = document.getElementById('new-game-btn');
         if (newGameBtn) {
-            debugLog("New Game button found");
 
             // Handle button click
             newGameBtn.addEventListener('click', () => {
-                debugLog("New Game button clicked");
                 // Visual feedback that the button was clicked
                 newGameBtn.classList.add('loading');
                 newGameBtn.innerHTML = '<span class="spinner"></span> Starting...';
@@ -203,10 +97,8 @@
 
                 // Fix for potential CORS issues - add absolute URL
                 const baseUrl = window.location.origin;
-                debugLog(`Base URL: ${baseUrl}`);
 
                 // Check if API endpoints are accessible
-                debugLog("Sending new game request...");
                 fetch(`${baseUrl}/api/v1/chess/new-game`, {
                     method: 'POST',
                     headers: {
@@ -216,12 +108,9 @@
                     credentials: 'same-origin'
                 })
                     .then(response => {
-                        debugLog(`New game API response status: ${response.status}`);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
-                        debugLog("New game created successfully");
-                        addMoveToHistory("New game started");
 
                         return fetch(`${baseUrl}/api/v1/chess/board`, {
                             headers: {
@@ -231,14 +120,12 @@
                         });
                     })
                     .then(response => {
-                        debugLog(`Board API response status: ${response.status}`);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
                     })
                     .then(boardData => {
-                        debugLog(`Board data received with ${boardData.length} pieces`);
                         // Hide game result if visible
                         document.getElementById('game-result').classList.add('hidden');
 
@@ -250,14 +137,12 @@
                         });
                     })
                     .then(response => {
-                        debugLog(`Status API response status: ${response.status}`);
                         if (!response.ok) {
                             throw new Error(`HTTP error! status: ${response.status}`);
                         }
                         return response.json();
                     })
                     .then(statusData => {
-                        debugLog(`Status data received: ${JSON.stringify(statusData)}`);
                         newGameBtn.classList.remove('loading');
                         newGameBtn.textContent = "New Game";
 
@@ -268,8 +153,6 @@
                         setTimeout(() => {
                             statusElement.classList.remove('status-update');
                         }, 500);
-
-                        debugLog("All API calls completed successfully");
                     })
                     .catch(error => {
                         newGameBtn.classList.remove('loading');
@@ -280,30 +163,18 @@
                         gameResult.textContent = `Error: ${error.message}`;
                         gameResult.classList.remove('hidden');
                         gameResult.classList.add('error');
-
-                        debugLog(`Error: ${error.message}`);
-                        // Try to determine if it's a CORS issue
-                        if (error.message.includes('NetworkError') || error.message.includes('Failed to fetch')) {
-                            debugLog("This might be a CORS or network issue. Check browser console for more details.");
-                        }
                     });
             });
 
             // Make sure the button is visible and enabled
             newGameBtn.style.display = 'inline-block';
             newGameBtn.disabled = false;
-            debugLog("Button click listener attached");
-        } else {
-            debugLog("New Game button NOT found");
         }
     });
 
     // Listen for move events from the chess.js script
     document.addEventListener('chess-move', function(e) {
-        debugLog("Chess move event received");
         if (e.detail && e.detail.notation) {
-            addMoveToHistory(e.detail.notation);
-
             // If a piece was captured
             if (e.detail.capturedPiece) {
                 addCapturedPiece(e.detail.capturedPiece, e.detail.capturedColor);
@@ -314,4 +185,3 @@
 <script src="/js/chess.js"></script>
 </body>
 </html>
-```
