@@ -107,17 +107,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Initialize promotion pieces images
     function initPromotionImages() {
-        const color = currentTurn
-        const queenImg = document.getElementById("promotion-queen")
-        const rookImg = document.getElementById("promotion-rook")
-        const bishopImg = document.getElementById("promotion-bishop")
-        const knightImg = document.getElementById("promotion-knight")
+        const color = currentTurn;
+        const queenImg = document.getElementById("promotion-queen");
+        const rookImg = document.getElementById("promotion-rook");
+        const bishopImg = document.getElementById("promotion-bishop");
+        const knightImg = document.getElementById("promotion-knight");
+
+        console.log("Initializing promotion images for color:", color);
 
         if (queenImg && rookImg && bishopImg && knightImg) {
-            queenImg.src = `/images/${color[0]}-queen.png`
-            rookImg.src = `/images/${color[0]}-rook.png`
-            bishopImg.src = `/images/${color[0]}-rook.png`
-            knightImg.src = `/images/${color[0]}-knight.png`
+            // Use relative paths since images are in the same directory
+            const prefix = color[0].toLowerCase() === "w" ? "b" : "w";
+
+            // Set image sources
+            queenImg.src = `/${prefix}-queen.png`;
+            rookImg.src = `/${prefix}-rook.png`;
+            bishopImg.src = `/${prefix}-bishop.png`;
+            knightImg.src = `/${prefix}-knight.png`;
+
+            // Add error handlers for debugging
+            const handleImageError = (img, piece) => (e) => {
+                console.error(`Failed to load ${piece} image:`, img.src);
+                console.log("Current location:", window.location.href);
+                console.log("Attempted to load from:", img.src);
+            };
+
+            queenImg.onerror = handleImageError(queenImg, 'queen');
+            rookImg.onerror = handleImageError(rookImg, 'rook');
+            bishopImg.onerror = handleImageError(bishopImg, 'bishop');
+            knightImg.onerror = handleImageError(knightImg, 'knight');
+
+            console.log("Promotion images initialized with sources:", {
+                queen: queenImg.src,
+                rook: rookImg.src,
+                bishop: bishopImg.src,
+                knight: knightImg.src
+            });
+        } else {
+            console.error("Promotion image elements not found");
         }
     }
 

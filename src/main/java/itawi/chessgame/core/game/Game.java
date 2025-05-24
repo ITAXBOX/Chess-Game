@@ -137,13 +137,6 @@ public class Game {
             } else {
                 board.setEnPassantTarget(null);
             }
-
-            // Check for pawn promotion
-            int promotionRank = movedPiece.getColor().equals("white") ? 7 : 0; // White promotes on rank 8, black on rank 1
-            if (toCoords[1] == promotionRank) {
-                // Handle pawn promotion
-                handlePawnPromotion(toPosition);
-            }
         } else {
             board.setEnPassantTarget(null);
         }
@@ -193,15 +186,6 @@ public class Game {
         }
 
         return true;
-    }
-
-    // A method to handle the promotion process
-    private void handlePawnPromotion(String position) {
-        // In a real game with a UI, you would prompt the user to choose the piece
-        // For now, let's use a default promotion to Queen
-        // This should be replaced with actual user input in your frontend
-        String chosenPieceType = "queen"; // Default to queen
-        promotePawn(position, chosenPieceType);
     }
 
     private boolean isCheckmate() {
