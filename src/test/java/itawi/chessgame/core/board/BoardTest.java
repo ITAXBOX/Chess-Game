@@ -123,6 +123,30 @@ class BoardTest {
     }
 
     @Test
+    void testKingInCheck() {
+        // Set up a position where the king is in check
+        board.getBoard().clear();
+
+        // Place white king and black queen
+        King whiteKing = new King("white", "e1");
+        board.getBoard().put("e1", whiteKing);
+        Queen blackQueen = new Queen("black", "e8");
+        board.getBoard().put("e8", blackQueen);
+
+        // Verify king is in check
+        boolean isInCheck = board.isKingInCheck("white", board.getBoard());
+        assertTrue(isInCheck);
+
+        // Try to move king out of check
+        boolean moveResult = board.movePiece("e1", "d2", "white");
+        assertTrue(moveResult);
+
+        // King should no longer be in check
+        isInCheck = board.isKingInCheck("white", board.getBoard());
+        assertFalse(isInCheck);
+    }
+
+    @Test
     void testCastlingKingside() {
         // Clear the way for castling
         board.getBoardState().remove("f1");
@@ -184,5 +208,41 @@ class BoardTest {
         Rook rook = (Rook) board.getPieceAt("d1");
         assertTrue(king.getHasMoved());
         assertTrue(rook.getHasMoved());
+    }
+
+    @Test
+    void testPawnPromotion() {
+        // Clear the board to set up a test position
+        board.getBoard().clear();
+
+        // Set up a pawn about to be promoted
+        Pawn whitePawn = new Pawn("white", "d7");
+        whitePawn.setHasMoved(true);
+        board.getBoard().put("d7", whitePawn);
+
+        // We need to add kings to the board so the isKingInCheck validation passes
+        board.getBoard().put("e1", new King("white", "e1"));
+        board.getBoard().put("e8", new King("black", "e8"));
+
+        // Move pawn to promotion square
+        boolean result = board.movePiece("d7", "d8", "white");
+
+        // Move should succeed
+        assertTrue(result);
+
+        // Verify pawn at promotion square
+        Piece promotedPiece = board.getPieceAt("d8");
+        assertNotNull(promotedPiece);
+        assertInstanceOf(Pawn.class, promotedPiece);
+        assertEquals("white", promotedPiece.getColor());
+
+        // In an actual game, the Game class would handle the promotion
+        // But we can manually replace the piece to test board behavior
+        board.getBoard().put("d8", new Queen("white", "d8"));
+
+        // Verify the replacement worked
+        promotedPiece = board.getPieceAt("d8");
+        assertInstanceOf(Queen.class, promotedPiece);
+        assertEquals("white", promotedPiece.getColor());
     }
 }
