@@ -282,9 +282,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Handle square click
     async function handleSquareClick(position) {
-        if (gameOver || !position) return
+        if (gameOver || !position) return;
 
         try {
+            // Store the source square before making the move
+            const sourceSquare = selectedSquare;
+
             const response = await fetch("/api/v1/chess/square-click", {
                 method: "POST",
                 headers: {
@@ -294,66 +297,66 @@ document.addEventListener("DOMContentLoaded", () => {
                     position,
                     selectedPosition: selectedSquare,
                 }),
-            })
+            });
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+                throw new Error(`HTTP error! status: ${response.status}`);
             }
 
-            const data = await response.json()
+            const data = await response.json();
 
             // Update selected square and valid moves
-            selectedSquare = data.selectedPosition || null
-            validMoves = Array.isArray(data.validMoves) ? data.validMoves : []
+            selectedSquare = data.selectedPosition || null;
+            validMoves = Array.isArray(data.validMoves) ? data.validMoves : [];
 
             // Highlight valid moves
-            highlightSquares(validMoves)
+            highlightSquares(validMoves);
 
             // If move was successful, update the board
             if (data.moveSuccess) {
-                let toPiece = null
+                let toPiece = null;
 
                 if (data.newBoardState) {
                     // Find the piece that moved to the destination
-                    toPiece = data.newBoardState.find((piece) => piece.position === position)
+                    toPiece = data.newBoardState.find((piece) => piece.position === position);
 
                     // Update the board with the new state
-                    updateBoard(data.newBoardState || [])
-                    updateGameStatus(data.gameStatus || {})
+                    updateBoard(data.newBoardState || []);
+                    updateGameStatus(data.gameStatus || {});
 
                     // Create notation for the move history with colored piece symbols
-                    let moveNotation = ""
+                    let moveNotation = "";
 
                     if (toPiece) {
                         // Create colored piece symbol
-                        const coloredPieceSymbol = createColoredPieceSymbol(toPiece.type, toPiece.color)
+                        const coloredPieceSymbol = createColoredPieceSymbol(toPiece.type, toPiece.color);
 
-                        // Format as "♔ e2→e4" with colored piece symbol
-                        moveNotation = `${coloredPieceSymbol} ${selectedSquare}→${position}`
+                        // Use the stored sourceSquare instead of selectedSquare
+                        moveNotation = `${coloredPieceSymbol} ${sourceSquare || '??'}→${position}`;
 
                         // Add capture indication if a piece was captured
                         if (data.capturedPiece) {
-                            const capturedSymbol = createColoredPieceSymbol(data.capturedPiece.type, data.capturedPiece.color)
-                            moveNotation += ` ×${capturedSymbol}` // Add captured piece symbol
+                            const capturedSymbol = createColoredPieceSymbol(data.capturedPiece.type, data.capturedPiece.color);
+                            moveNotation += ` ×${capturedSymbol}`;
                         }
 
                         // Add check or checkmate symbol if applicable
                         if (data.gameStatus && data.gameStatus.inCheck) {
                             if (data.gameStatus.isGameOver) {
-                                moveNotation += " #" // Checkmate symbol
+                                moveNotation += " #"; // Checkmate symbol
                             } else {
-                                moveNotation += " +" // Check symbol
+                                moveNotation += " +"; // Check symbol
                             }
                         }
 
-                        console.log("Adding move to history:", moveNotation)
-                        addMoveToHistory(moveNotation)
+                        console.log("Adding move to history:", moveNotation);
+                        addMoveToHistory(moveNotation);
 
-                        // Also dispatch an event so other components can react
+                        // Dispatch event
                         document.dispatchEvent(
                             new CustomEvent("chess-move", {
                                 detail: {
-                                    from: selectedSquare,
+                                    from: sourceSquare,
                                     to: position,
                                     piece: toPiece.type,
                                     color: toPiece.color,
@@ -362,26 +365,26 @@ document.addEventListener("DOMContentLoaded", () => {
                                     capturedColor: data.capturedPiece ? data.capturedPiece.color : null,
                                 },
                             }),
-                        )
+                        );
 
                         // Check if a piece was captured
                         if (data.capturedPiece) {
-                            addCapturedPiece(data.capturedPiece.type, data.capturedPiece.color)
+                            addCapturedPiece(data.capturedPiece.type, data.capturedPiece.color);
                         }
                     }
                 }
 
                 // Check for pawn promotion
                 if (data.pawnPromotion && promotionModal) {
-                    promotionPosition = data.promotionPosition || null
-                    initPromotionImages()
-                    promotionModal.style.display = "flex"
+                    promotionPosition = data.promotionPosition || null;
+                    initPromotionImages();
+                    promotionModal.style.display = "flex";
                 }
             }
         } catch (error) {
-            console.error("Error handling square click:", error)
+            console.error("Error handling square click:", error);
             if (statusDisplay) {
-                statusDisplay.textContent = "An error occurred. Please try again."
+                statusDisplay.textContent = "An error occurred. Please try again.";
             }
         }
     }
