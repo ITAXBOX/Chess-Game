@@ -16,6 +16,7 @@
             --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             --warning-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
             --space-gradient: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 25%, #16213e 50%, #0f3460 75%, #533483 100%);
+            --quote-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #533483 100%);
 
             --primary-color: #667eea;
             --primary-hover: #5a6fd8;
@@ -364,6 +365,235 @@
         .card:hover {
             transform: translateY(-1px);
             box-shadow: var(--shadow-xl);
+        }
+
+        /* Compact Professional Quote Section */
+        .quote-section {
+            background: linear-gradient(135deg, var(--bg-card) 0%, rgba(22, 33, 62, 0.95) 100%);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-lg), 0 0 20px rgba(102, 126, 234, 0.1);
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+            transition: all var(--transition-normal);
+            margin-top: auto;
+            backdrop-filter: blur(10px);
+            min-height: 300px;
+        }
+
+        .quote-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-size: 200% 100%;
+        }
+
+        .quote-section::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 80% 20%, rgba(102, 126, 234, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(245, 87, 108, 0.06) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .quote-section:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl), 0 0 25px rgba(102, 126, 234, 0.2);
+        }
+
+        .quote-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            justify-content: center;
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.5;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            font-style: italic;
+            position: relative;
+            padding: 0 12px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .quote-text::before {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            position: absolute;
+            top: -8px;
+            left: -2px;
+            font-family: "Georgia", serif;
+            opacity: 0.4;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .quote-text::after {
+            content: '"';
+            font-size: 3rem;
+            color: var(--primary-color);
+            position: absolute;
+            bottom: -18px;
+            right: -2px;
+            font-family: "Georgia", serif;
+            opacity: 0.4;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .quote-subtext {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-bottom: 16px;
+            opacity: 0.8;
+            font-weight: 400;
+        }
+
+        .quote-author {
+            margin-top: 16px;
+            padding-top: 14px;
+            border-top: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .author-name {
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 2px;
+            position: relative;
+        }
+
+        .author-name::before {
+            content: '—';
+            color: var(--primary-color);
+            font-weight: 400;
+            margin-right: 6px;
+        }
+
+        .author-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            font-style: italic;
+        }
+
+        .quote-decorative-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .chess-piece-silhouette {
+            position: absolute;
+            width: 35px;
+            height: 35px;
+            opacity: 0.04;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        .chess-piece-silhouette.king {
+            top: 12px;
+            right: 12px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2l1.5 3h3l-2.5 2 1 3-3-2-3 2 1-3-2.5-2h3L12 2zm0 6c-3 0-5.5 2.5-5.5 5.5S9 19 12 19s5.5-2.5 5.5-5.5S15 8 12 8z"/></svg>');
+        }
+
+        .chess-piece-silhouette.queen {
+            bottom: 12px;
+            left: 12px;
+            background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2l2 4h4l-3 3 1 4-4-2-4 2 1-4-3-3h4l2-4zm0 8c-2 0-3.5 1.5-3.5 3.5S10 17 12 17s3.5-1.5 3.5-3.5S14 10 12 10z"/></svg>');
+        }
+
+        .floating-particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            opacity: 0.4;
+        }
+
+        .particle:nth-child(1) {
+            top: 25%;
+            left: 15%;
+            animation-delay: 0s;
+            animation-duration: 8s;
+        }
+
+        .particle:nth-child(2) {
+            top: 60%;
+            right: 20%;
+            animation-delay: 2s;
+            animation-duration: 6s;
+        }
+
+        /* Responsive adjustments for compact quote section */
+        @media (max-width: 768px) {
+            .quote-section {
+                padding: 16px;
+            }
+
+            .quote-text {
+                font-size: 0.9rem;
+                padding: 0 10px;
+            }
+
+            .quote-text::before,
+            .quote-text::after {
+                font-size: 2rem;
+            }
+
+            .chess-piece-silhouette {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .quote-section {
+                padding: 14px;
+            }
+
+            .quote-text {
+                font-size: 0.85rem;
+                padding: 0 8px;
+            }
+
+            .quote-header {
+                margin-bottom: 10px;
+            }
+
+            .quote-title-text {
+                font-size: 0.9rem;
+            }
         }
 
         /* Game Info with Centered Button */
@@ -1288,6 +1518,14 @@
                 width: 50px;
                 height: 50px;
             }
+
+            .quote-section {
+                padding: 20px;
+            }
+
+            .quote-text {
+                font-size: 1rem;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1316,6 +1554,18 @@
 
             .game-sidebar {
                 grid-template-columns: 1fr;
+            }
+
+            .quote-section {
+                padding: 16px;
+            }
+
+            .quote-text {
+                font-size: 0.95rem;
+            }
+
+            .quote-author {
+                font-size: 0.85rem;
             }
         }
 
@@ -1454,16 +1704,16 @@
                     <h3>Choose Promotion Piece</h3>
                     <div class="promotion-options">
                         <div class="promotion-piece" data-piece="QUEEN">
-                            <img src="" alt="Queen" id="promotion-queen">
+                            <img src="/placeholder.svg" alt="Queen" id="promotion-queen">
                         </div>
                         <div class="promotion-piece" data-piece="ROOK">
-                            <img src="" alt="Rook" id="promotion-rook">
+                            <img src="/placeholder.svg" alt="Rook" id="promotion-rook">
                         </div>
                         <div class="promotion-piece" data-piece="BISHOP">
-                            <img src="" alt="Bishop" id="promotion-bishop">
+                            <img src="/placeholder.svg" alt="Bishop" id="promotion-bishop">
                         </div>
                         <div class="promotion-piece" data-piece="KNIGHT">
-                            <img src="" alt="Knight" id="promotion-knight">
+                            <img src="/placeholder.svg" alt="Knight" id="promotion-knight">
                         </div>
                     </div>
                 </div>
@@ -1489,6 +1739,32 @@
                 <div class="captured-black">
                     <h4>Black Pieces</h4>
                     <div id="black-captured" class="pieces-container"></div>
+                </div>
+            </div>
+
+            <!-- Compact Professional Quote Section -->
+            <div class="quote-section">
+
+                <div class="quote-content" style="margin-bottom: 0px;">
+                    <div class="quote-text">
+                        "Every chess master was once a beginner."
+                    </div>
+                    <div class="quote-subtext">
+                        The journey of mastery begins with a single move
+                    </div>
+                    <div class="quote-author">
+                        <div class="author-name">Robin Sharma</div>
+                        <div class="author-title">Leadership Expert</div>
+                    </div>
+                </div>
+
+                <div class="quote-decorative-elements">
+                    <div class="chess-piece-silhouette king"></div>
+                    <div class="chess-piece-silhouette queen"></div>
+                    <div class="floating-particles">
+                        <div class="particle"></div>
+                        <div class="particle"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1620,12 +1896,12 @@
     }
 
     // Add event listener for the close button
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         const modalClose = document.querySelector('.modal-close');
         const gameSetupModal = document.getElementById('game-setup-modal');
 
         if (modalClose && gameSetupModal) {
-            modalClose.addEventListener('click', function() {
+            modalClose.addEventListener('click', function () {
                 gameSetupModal.classList.remove('active');
             });
         }
@@ -1633,7 +1909,7 @@
         // Also close modal when clicking on overlay
         const modalOverlay = document.querySelector('.modal-overlay');
         if (modalOverlay) {
-            modalOverlay.addEventListener('click', function() {
+            modalOverlay.addEventListener('click', function () {
                 gameSetupModal.classList.remove('active');
             });
         }
@@ -1749,7 +2025,7 @@
 
                     // Prepare request body - only include timeMinutes if it's not "No Time"
                     const requestBody = selectedTimeMinutes > 0 ?
-                        { timeMinutes: selectedTimeMinutes } :
+                        {timeMinutes: selectedTimeMinutes} :
                         {};
 
                     // Start new game
