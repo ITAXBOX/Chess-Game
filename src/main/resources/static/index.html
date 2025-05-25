@@ -73,7 +73,8 @@
 
         html, body {
             height: 100%;
-            overflow: hidden;
+            width: 100%;
+            overflow-x: hidden;
         }
 
         body {
@@ -88,13 +89,15 @@
         }
 
         .container {
-            height: 100vh;
+            min-height: 100vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
             background: var(--bg-card);
             box-shadow: var(--shadow-2xl);
             backdrop-filter: blur(20px);
             border: 1px solid var(--border-light);
+            overflow-x: hidden;
         }
 
         /* Enhanced Header with Space Design */
@@ -308,14 +311,14 @@
             gap: 24px;
             padding: 32px;
             min-height: 0;
-            overflow: hidden;
+            overflow: visible;
         }
 
         .game-sidebar {
             display: flex;
             flex-direction: column;
             gap: 20px;
-            min-height: 0;
+            height: 100%;
         }
 
         .chessboard-container {
@@ -331,11 +334,9 @@
         .captured-sidebar {
             display: flex;
             flex-direction: column;
-            align-self: flex-start;
-            justify-content: center;
+            justify-content: space-between;
             gap: 20px;
-            min-height: 0;
-            max-width: 320px;
+            height: 100%;
         }
 
         /* Enhanced Card Components */
@@ -380,6 +381,9 @@
             margin-top: auto;
             backdrop-filter: blur(10px);
             min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         .quote-section::before {
@@ -813,8 +817,6 @@
             border: 1px solid var(--border-color);
             position: relative;
             overflow: hidden;
-            flex: 1;
-            min-height: 0;
             display: flex;
             flex-direction: column;
         }
@@ -1110,7 +1112,7 @@
 
         /* Enhanced Game Result */
         .game-result {
-            margin-top: 20px;
+            margin-bottom: 20px;
             text-align: center;
             font-size: 1.3rem;
             font-weight: 700;
@@ -1124,6 +1126,7 @@
             width: 100%;
             position: relative;
             overflow: hidden;
+            z-index: 10;
         }
 
         .game-result::before {
@@ -1619,7 +1622,7 @@
         </div>
         <div class="header-content">
             <img src="images/chess.svg" alt="Chess Logo" class="chess-logo">
-            <h1>Chess Master Pro</h1>
+            <h1>Chess Master</h1>
             <div class="subtitle">Experience the ultimate chess game</div>
         </div>
     </header>
@@ -1684,6 +1687,9 @@
         </div>
 
         <div class="chessboard-container">
+            <!-- Game result positioned above the board -->
+            <div id="game-result" class="game-result hidden"></div>
+
             <div class="board-wrapper">
                 <div class="coordinates">
                     <div class="ranks">
@@ -1718,8 +1724,6 @@
                     </div>
                 </div>
             </div>
-
-            <div id="game-result" class="game-result hidden"></div>
         </div>
 
         <div class="captured-sidebar">
@@ -1742,19 +1746,18 @@
                 </div>
             </div>
 
-            <!-- Compact Professional Quote Section -->
+            <!-- Enhanced Quote Section with better positioning -->
             <div class="quote-section">
-
-                <div class="quote-content" style="margin-bottom: 0px;">
+                <div class="quote-content">
                     <div class="quote-text">
-                        "Every chess master was once a beginner."
+                        "Chess is not merely an idle amusement. Life is a kind of chess, with struggle, competition, good and ill events."
                     </div>
                     <div class="quote-subtext">
-                        The journey of mastery begins with a single move
+                        Mastering the game, mastering life
                     </div>
                     <div class="quote-author">
-                        <div class="author-name">Robin Sharma</div>
-                        <div class="author-title">Leadership Expert</div>
+                        <div class="author-name">Benjamin Franklin</div>
+                        <div class="author-title">Statesman & Chess Enthusiast</div>
                     </div>
                 </div>
 
