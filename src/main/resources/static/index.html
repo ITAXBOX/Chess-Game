@@ -1318,6 +1318,42 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Add this new style for the close button */
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 32px;
+            height: 32px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
+            transition: all var(--transition-fast);
+        }
+
+        .modal-close:hover {
+            background: var(--bg-primary);
+            transform: rotate(90deg);
+        }
+
+        .modal-close svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-primary);
+        }
+
+        /* Update the time options grid to accommodate the new option */
+        #game-setup-modal .time-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
     </style>
 </head>
 <body>
@@ -1462,10 +1498,20 @@
     <div id="game-setup-modal" class="modal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
+            <div class="modal-close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </div>
             <h3>New Game</h3>
             <p style="margin-bottom: 20px;">Select time control for both players:</p>
 
             <div class="time-options">
+                <div class="time-option selected" data-time="0">
+                    <div class="time-value">∞</div>
+                    <div class="time-label">No Time</div>
+                </div>
                 <div class="time-option" data-time="1">
                     <div class="time-value">1:00</div>
                     <div class="time-label">Bullet</div>
@@ -1474,7 +1520,7 @@
                     <div class="time-value">3:00</div>
                     <div class="time-label">Blitz</div>
                 </div>
-                <div class="time-option selected" data-time="5">
+                <div class="time-option" data-time="5">
                     <div class="time-value">5:00</div>
                     <div class="time-label">Blitz</div>
                 </div>
@@ -1505,11 +1551,12 @@
 <script>
     // Chess Timer functionality
     let timerInterval = null;
-    let selectedTimeMinutes = 5; // Default time control (5 minutes)
+    let selectedTimeMinutes = 0; // Default to "No Time"
     let timersPaused = false;
 
-    // Function to format time in MM:SS
+    // Function to format time in MM:SS or show infinity symbol for no time
     function formatTime(timeInSeconds) {
+        if (timeInSeconds === 0) return "∞";
         const minutes = Math.floor(timeInSeconds / 60);
         const seconds = timeInSeconds % 60;
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
@@ -1528,80 +1575,114 @@
         whiteTimerContainer.classList.remove('active');
         blackTimerContainer.classList.remove('active');
 
-        // Update timer displays
-        if (gameStatus.whiteTime) {
-            whiteTimer.textContent = gameStatus.whiteTime;
-        }
+        // Update timer displays only if timers are enabled
+        if (selectedTimeMinutes > 0) {
+            if (gameStatus.whiteTime) {
+                whiteTimer.textContent = gameStatus.whiteTime;
+            }
 
-        if (gameStatus.blackTime) {
-            blackTimer.textContent = gameStatus.blackTime;
-        }
+            if (gameStatus.blackTime) {
+                blackTimer.textContent = gameStatus.blackTime;
+            }
 
-        // Highlight active timer based on current turn
-        if (gameStatus.currentTurn === 'white') {
-            whiteTimerContainer.classList.add('active');
-        } else if (gameStatus.currentTurn === 'black') {
-            blackTimerContainer.classList.add('active');
-        }
+            // Highlight active timer based on current turn
+            if (gameStatus.currentTurn === 'white') {
+                whiteTimerContainer.classList.add('active');
+            } else if (gameStatus.currentTurn === 'black') {
+                blackTimerContainer.classList.add('active');
+            }
 
-        // Check for low time (less than 30 seconds) and add warning class
-        const whiteTimeArray = gameStatus.whiteTime.split(':');
-        const blackTimeArray = gameStatus.blackTime.split(':');
+            // Check for low time (less than 30 seconds) and add warning class
+            if (gameStatus.whiteTime && gameStatus.whiteTime !== "∞") {
+                const whiteTimeArray = gameStatus.whiteTime.split(':');
+                const whiteTimeSeconds = parseInt(whiteTimeArray[0]) * 60 + parseInt(whiteTimeArray[1]);
+                if (whiteTimeSeconds < 30) {
+                    whiteTimerContainer.classList.add('low-time');
+                } else {
+                    whiteTimerContainer.classList.remove('low-time');
+                }
+            }
 
-        const whiteTimeSeconds = parseInt(whiteTimeArray[0]) * 60 + parseInt(whiteTimeArray[1]);
-        const blackTimeSeconds = parseInt(blackTimeArray[0]) * 60 + parseInt(blackTimeArray[1]);
-
-        if (whiteTimeSeconds < 30) {
-            whiteTimerContainer.classList.add('low-time');
+            if (gameStatus.blackTime && gameStatus.blackTime !== "∞") {
+                const blackTimeArray = gameStatus.blackTime.split(':');
+                const blackTimeSeconds = parseInt(blackTimeArray[0]) * 60 + parseInt(blackTimeArray[1]);
+                if (blackTimeSeconds < 30) {
+                    blackTimerContainer.classList.add('low-time');
+                } else {
+                    blackTimerContainer.classList.remove('low-time');
+                }
+            }
         } else {
-            whiteTimerContainer.classList.remove('low-time');
-        }
-
-        if (blackTimeSeconds < 30) {
-            blackTimerContainer.classList.add('low-time');
-        } else {
-            blackTimerContainer.classList.remove('low-time');
+            // For no time control, show infinity symbol
+            whiteTimer.textContent = "∞";
+            blackTimer.textContent = "∞";
         }
     }
 
-    // Function to start polling for timer updates
+    // Add event listener for the close button
+    document.addEventListener('DOMContentLoaded', function() {
+        const modalClose = document.querySelector('.modal-close');
+        const gameSetupModal = document.getElementById('game-setup-modal');
+
+        if (modalClose && gameSetupModal) {
+            modalClose.addEventListener('click', function() {
+                gameSetupModal.classList.remove('active');
+            });
+        }
+
+        // Also close modal when clicking on overlay
+        const modalOverlay = document.querySelector('.modal-overlay');
+        if (modalOverlay) {
+            modalOverlay.addEventListener('click', function() {
+                gameSetupModal.classList.remove('active');
+            });
+        }
+    });
+
+    // Update the startTimerPoll function to handle no time control
     function startTimerPoll() {
         if (timerInterval) {
             clearInterval(timerInterval);
         }
 
-        // Poll game status every second to update timers
-        timerInterval = setInterval(() => {
-            if (!timersPaused) {
-                fetch('/api/v1/chess/status')
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        updateTimers(data);
+        // Only poll for timer updates if time control is enabled
+        if (selectedTimeMinutes > 0) {
+            timerInterval = setInterval(() => {
+                if (!timersPaused) {
+                    fetch('/api/v1/chess/status')
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            updateTimers(data);
 
-                        // Check for game over
-                        if (data.isGameOver) {
-                            clearInterval(timerInterval);
+                            // Check for game over
+                            if (data.isGameOver) {
+                                clearInterval(timerInterval);
 
-                            // Display result if there's a timeout
-                            if (data.result && data.result.includes('lost on time')) {
-                                const gameResult = document.getElementById('game-result');
-                                if (gameResult) {
-                                    gameResult.textContent = data.result;
-                                    gameResult.classList.remove('hidden');
+                                // Display result if there's a timeout
+                                if (data.result && data.result.includes('lost on time')) {
+                                    const gameResult = document.getElementById('game-result');
+                                    if (gameResult) {
+                                        gameResult.textContent = data.result;
+                                        gameResult.classList.remove('hidden');
+                                    }
                                 }
                             }
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error updating timers:', error);
-                    });
-            }
-        }, 1000);
+                        })
+                        .catch(error => {
+                            console.error('Error updating timers:', error);
+                        });
+                }
+            }, 1000);
+        } else {
+            // For no time control, just show infinity symbols
+            document.getElementById('white-timer').textContent = "∞";
+            document.getElementById('black-timer').textContent = "∞";
+        }
     }
 
     // Check if the new game button exists
@@ -1635,7 +1716,7 @@
                 });
             });
 
-            // Start game with selected time
+            // Update the start game button event listener
             if (startGameBtn) {
                 startGameBtn.addEventListener('click', () => {
                     // Hide modal
@@ -1645,39 +1726,44 @@
                     startGameBtn.classList.add('loading');
                     startGameBtn.innerHTML = '<span class="spinner"></span> Starting...';
 
-                    // Format time displays
-                    const whiteTimer = document.getElementById('white-timer');
-                    const blackTimer = document.getElementById('black-timer');
-
-                    const formattedTime = formatTime(selectedTimeMinutes * 60);
-                    if (whiteTimer) whiteTimer.textContent = formattedTime;
-                    if (blackTimer) blackTimer.textContent = formattedTime;
-
                     // Clear existing moves and captured pieces
                     document.getElementById('moves-list').innerHTML = '';
                     document.getElementById('white-captured').innerHTML = '';
                     document.getElementById('black-captured').innerHTML = '';
+
+                    // Hide timer controls for "No Time" option
+                    const timerControls = document.querySelector('.timer-controls');
+                    const timersContainer = document.querySelector('.timers-container');
+                    if (selectedTimeMinutes === 0) {
+                        if (timerControls) timerControls.style.display = 'none';
+                        if (timersContainer) timersContainer.style.display = 'none';
+                    } else {
+                        if (timerControls) timerControls.style.display = 'flex';
+                        if (timersContainer) timersContainer.style.display = 'flex';
+                    }
 
                     // Reset timer controls
                     timersPaused = false;
                     if (pauseTimerBtn) pauseTimerBtn.style.display = 'inline-flex';
                     if (resumeTimerBtn) resumeTimerBtn.style.display = 'none';
 
-                    // Start new game with selected time
+                    // Prepare request body - only include timeMinutes if it's not "No Time"
+                    const requestBody = selectedTimeMinutes > 0 ?
+                        { timeMinutes: selectedTimeMinutes } :
+                        {};
+
+                    // Start new game
                     fetch('/api/v1/chess/new-game', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
                         },
-                        body: JSON.stringify({
-                            timeMinutes: selectedTimeMinutes
-                        })
+                        body: JSON.stringify(requestBody)
                     })
                         .then(response => {
                             if (!response.ok) {
                                 throw new Error(`HTTP error! status: ${response.status}`);
                             }
-
                             return fetch('/api/v1/chess/board');
                         })
                         .then(response => {
@@ -1701,11 +1787,11 @@
                         .then(statusData => {
                             startGameBtn.classList.remove('loading');
                             startGameBtn.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                            </svg>
-                            Start Game
-                        `;
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Start Game
+            `;
 
                             // Update status with animation
                             const statusElement = document.getElementById('status');
@@ -1715,17 +1801,23 @@
                                 statusElement.classList.remove('status-update');
                             }, 500);
 
-                            // Start timer polling
-                            startTimerPoll();
+                            // Start timer polling only if time control is enabled
+                            if (selectedTimeMinutes > 0) {
+                                startTimerPoll();
+                            } else {
+                                // For no time control, show infinity symbols
+                                document.getElementById('white-timer').textContent = "∞";
+                                document.getElementById('black-timer').textContent = "∞";
+                            }
                         })
                         .catch(error => {
                             startGameBtn.classList.remove('loading');
                             startGameBtn.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                            </svg>
-                            Start Game
-                        `;
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Start Game
+            `;
 
                             // Show error notification
                             const gameResult = document.getElementById('game-result');
