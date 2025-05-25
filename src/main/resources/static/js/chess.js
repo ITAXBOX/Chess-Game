@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pieceGroup.dataset.piece = pieceKey
 
             const pieceElement = document.createElement("img")
-            pieceElement.src = `/${color[0]}-${pieceType}.png`
+            pieceElement.src = `/images/${color[0]}-${pieceType}.png`
             pieceElement.alt = pieceType
             pieceElement.className = "captured-piece"
 
@@ -120,10 +120,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const prefix = color[0].toLowerCase() === "w" ? "b" : "w";
 
             // Set image sources
-            queenImg.src = `/${prefix}-queen.png`;
-            rookImg.src = `/${prefix}-rook.png`;
-            bishopImg.src = `/${prefix}-bishop.png`;
-            knightImg.src = `/${prefix}-knight.png`;
+            queenImg.src = `/images/${prefix}-queen.png`;
+            rookImg.src = `/images/${prefix}-rook.png`;
+            bishopImg.src = `/images/${prefix}-bishop.png`;
+            knightImg.src = `/images/${prefix}-knight.png`;
 
             // Add error handlers for debugging
             const handleImageError = (img, piece) => (e) => {
@@ -201,14 +201,14 @@ document.addEventListener("DOMContentLoaded", () => {
             if (square) {
                 const pieceElement = document.createElement("img")
                 pieceElement.className = "piece"
-                pieceElement.src = `/${piece.color[0]}-${piece.type.toLowerCase()}.png`
+                pieceElement.src = `/images/${piece.color[0]}-${piece.type.toLowerCase()}.png`
                 pieceElement.alt = `${piece.color} ${piece.type}`
                 pieceElement.draggable = false
 
                 // Add error handling for image loading
                 pieceElement.onerror = () => {
                     console.warn(`Failed to load image for ${piece.color} ${piece.type}`)
-                    pieceElement.src = "/placeholder-piece.png"
+                    pieceElement.src = "/images/placeholder-piece.png"
                 }
 
                 square.appendChild(pieceElement)
