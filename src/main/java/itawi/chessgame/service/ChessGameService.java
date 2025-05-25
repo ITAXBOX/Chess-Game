@@ -22,6 +22,14 @@ public class ChessGameService {
         this.currentGame = new Game();
     }
 
+    /**
+     * Create a new game with specified time for each player
+     * @param timeMinutes Time in minutes for each player
+     */
+    public void newGame(int timeMinutes) {
+        this.currentGame = new Game(timeMinutes);
+    }
+
     public Map<String, Piece> getBoardState() {
         return this.currentGame.getBoard().getBoardState();
     }
@@ -100,8 +108,18 @@ public class ChessGameService {
 
         status.put("inCheck", inCheck);
 
+        // Add timer information
+        String whiteTime = currentGame.getTimer().getFormattedTime("white");
+        String blackTime = currentGame.getTimer().getFormattedTime("black");
+        String timeoutPlayer = currentGame.getTimeoutPlayer();
+        status.put("whiteTime", whiteTime);
+        status.put("blackTime", blackTime);
+        status.put("timerRunning", currentGame.getTimer().isTimerRunning());
+
         if (isGameOver()) {
-            if (inCheck) {
+            if (timeoutPlayer != null) {
+                status.put("result", timeoutPlayer + " lost on time");
+            } else if (inCheck) {
                 status.put("result", (currentPlayer.equals("white") ? "Black" : "White") + " wins by checkmate");
             } else if (currentGame.isPerpetualDraw()) {
                 status.put("result", "Perpetual draw! The game is a draw due to threefold repetition");

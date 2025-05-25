@@ -17,8 +17,14 @@ public class ChessGameController {
     private final ChessGameService chessGameService;
 
     @PostMapping("/new-game")
-    public ResponseEntity<Void> newGame() {
-        chessGameService.newGame();
+    public ResponseEntity<Void> newGame(@RequestBody(required = false) Map<String, Integer> gameSettings) {
+        if (gameSettings != null && gameSettings.containsKey("timeMinutes")) {
+            // Start a new game with specified time control
+            chessGameService.newGame(gameSettings.get("timeMinutes"));
+        } else {
+            // Start new game with default time (5 minutes)
+            chessGameService.newGame();
+        }
         return ResponseEntity.ok().build();
     }
 
@@ -53,6 +59,33 @@ public class ChessGameController {
         String selectedPosition = clickRequest.get("selectedPosition");
 
         Map<String, Object> response = chessGameService.handleSquareClick(position, selectedPosition);
+
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/timer/pause")
+    public ResponseEntity<Map<String, Object>> pauseTimer() {
+        // Only pause if the game has started
+        if (chessGameService.getCurrentGame().getTimer().isTimerRunning()) {
+            chessGameService.getCurrentGame().getTimer().stopTimer();
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "timerRunning", chessGameService.getCurrentGame().getTimer().isTimerRunning(),
+                "gameStatus", chessGameService.getGameStatus()
+        ));
+    }
+
+    @PostMapping("/timer/resume")
+    public ResponseEntity<Map<String, Object>> resumeTimer() {
+        // Only resume if the game is not over
+        if (!chessGameService.getCurrentGame().isGameOver()) {
+            chessGameService.getCurrentGame().getTimer().startTimer();
+        }
+
+        return ResponseEntity.ok(Map.of(
+                "timerRunning", chessGameService.getCurrentGame().getTimer().isTimerRunning(),
+                "gameStatus", chessGameService.getGameStatus()
+        ));
     }
 }

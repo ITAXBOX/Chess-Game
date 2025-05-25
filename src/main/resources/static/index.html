@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chess Master</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -79,10 +80,9 @@
             background: var(--bg-primary);
             color: var(--text-primary);
             line-height: 1.6;
-            background-image:
-                    radial-gradient(circle at 25% 25%, rgba(83, 52, 131, 0.3) 0%, transparent 50%),
-                    radial-gradient(circle at 75% 75%, rgba(15, 52, 96, 0.3) 0%, transparent 50%),
-                    radial-gradient(circle at 50% 50%, rgba(26, 26, 46, 0.5) 0%, transparent 70%);
+            background-image: radial-gradient(circle at 25% 25%, rgba(83, 52, 131, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 75% 75%, rgba(15, 52, 96, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(26, 26, 46, 0.5) 0%, transparent 70%);
             transition: all var(--transition-normal);
         }
 
@@ -119,10 +119,9 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-image:
-                    radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
-                    radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+            background-image: radial-gradient(circle at 20% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 40% 40%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
             animation: headerFloat 8s ease-in-out infinite;
         }
 
@@ -139,9 +138,15 @@
         }
 
         @keyframes headerFloat {
-            0%, 100% { transform: translateY(0px) scale(1); }
-            33% { transform: translateY(-5px) scale(1.02); }
-            66% { transform: translateY(5px) scale(0.98); }
+            0%, 100% {
+                transform: translateY(0px) scale(1);
+            }
+            33% {
+                transform: translateY(-5px) scale(1.02);
+            }
+            66% {
+                transform: translateY(5px) scale(0.98);
+            }
         }
 
         .header-content {
@@ -163,8 +168,12 @@
         }
 
         @keyframes logoGlow {
-            0%, 100% { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)) brightness(1); }
-            50% { filter: drop-shadow(0 6px 12px rgba(255, 255, 255, 0.3)) brightness(1.2); }
+            0%, 100% {
+                filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2)) brightness(1);
+            }
+            50% {
+                filter: drop-shadow(0 6px 12px rgba(255, 255, 255, 0.3)) brightness(1.2);
+            }
         }
 
         h1 {
@@ -181,8 +190,12 @@
         }
 
         @keyframes titleShine {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
         }
 
         .subtitle {
@@ -213,16 +226,51 @@
             box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
         }
 
-        .decoration:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
-        .decoration:nth-child(2) { top: 30%; right: 20%; animation-delay: 1s; }
-        .decoration:nth-child(3) { bottom: 25%; left: 25%; animation-delay: 2s; }
-        .decoration:nth-child(4) { bottom: 35%; right: 15%; animation-delay: 0.5s; }
-        .decoration:nth-child(5) { top: 50%; left: 10%; animation-delay: 1.5s; }
-        .decoration:nth-child(6) { top: 60%; right: 10%; animation-delay: 2.5s; }
+        .decoration:nth-child(1) {
+            top: 20%;
+            left: 15%;
+            animation-delay: 0s;
+        }
+
+        .decoration:nth-child(2) {
+            top: 30%;
+            right: 20%;
+            animation-delay: 1s;
+        }
+
+        .decoration:nth-child(3) {
+            bottom: 25%;
+            left: 25%;
+            animation-delay: 2s;
+        }
+
+        .decoration:nth-child(4) {
+            bottom: 35%;
+            right: 15%;
+            animation-delay: 0.5s;
+        }
+
+        .decoration:nth-child(5) {
+            top: 50%;
+            left: 10%;
+            animation-delay: 1.5s;
+        }
+
+        .decoration:nth-child(6) {
+            top: 60%;
+            right: 10%;
+            animation-delay: 2.5s;
+        }
 
         @keyframes sparkle {
-            0%, 100% { opacity: 0.3; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.5); }
+            0%, 100% {
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.5);
+            }
         }
 
         /* Enhanced Typography */
@@ -365,7 +413,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
             transition: left 0.5s;
         }
 
@@ -408,7 +456,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -449,7 +497,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         /* Move History with Flexible Height */
@@ -619,9 +669,8 @@
             aspect-ratio: 1 / 1;
             border: 6px solid #1a1a2e;
             border-radius: var(--radius-lg);
-            box-shadow:
-                    var(--shadow-2xl),
-                    inset 0 0 0 2px rgba(255, 255, 255, 0.1);
+            box-shadow: var(--shadow-2xl),
+            inset 0 0 0 2px rgba(255, 255, 255, 0.1);
             position: relative;
             overflow: hidden;
             background: linear-gradient(45deg, #0f0f23 25%, transparent 25%),
@@ -688,9 +737,15 @@
         }
 
         @keyframes lastMoveGlow {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0.3; }
+            0% {
+                opacity: 0;
+            }
+            50% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0.3;
+            }
         }
 
         .square.valid-move {
@@ -711,8 +766,14 @@
         }
 
         @keyframes validMovePulse {
-            0%, 100% { transform: scale(1); opacity: 0.6; }
-            50% { transform: scale(1.2); opacity: 0.8; }
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
         }
 
         .square.check {
@@ -732,8 +793,14 @@
         }
 
         @keyframes checkPulse {
-            0%, 100% { opacity: 0.8; transform: scale(1); }
-            50% { opacity: 0.4; transform: scale(1.05); }
+            0%, 100% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            50% {
+                opacity: 0.4;
+                transform: scale(1.05);
+            }
         }
 
         .piece {
@@ -836,13 +903,17 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
             animation: resultShine 2s infinite;
         }
 
         @keyframes resultShine {
-            0% { left: -100%; }
-            100% { left: 100%; }
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
         }
 
         .game-result.error {
@@ -887,8 +958,12 @@
         }
 
         @keyframes modalFadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         .modal-overlay {
@@ -988,6 +1063,140 @@
 
         .promotion-piece:hover img {
             transform: scale(1.1);
+        }
+
+        /* Timer displays */
+        .timers-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .player-timer {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: var(--bg-secondary);
+            padding: 15px;
+            border-radius: var(--radius-lg);
+            width: 48%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+        }
+
+        .player-timer.white {
+            border-top: 3px solid #fff;
+        }
+
+        .player-timer.black {
+            border-top: 3px solid #444;
+        }
+
+        .player-timer.active {
+            box-shadow: var(--shadow-md);
+            border-color: var(--primary-color);
+            animation: timerPulse 2s infinite;
+        }
+
+        @keyframes timerPulse {
+            0%, 100% {
+                box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 0 6px rgba(102, 126, 234, 0.3);
+            }
+        }
+
+        .player-timer.low-time {
+            animation: lowTimeWarning 1s infinite;
+        }
+
+        @keyframes lowTimeWarning {
+            0%, 100% {
+                background-color: var(--bg-secondary);
+            }
+            50% {
+                background-color: rgba(255, 87, 87, 0.2);
+            }
+        }
+
+        .timer-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .timer-display {
+            font-family: "JetBrains Mono", monospace;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        /* Timer controls */
+        .timer-controls {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .secondary-btn {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            max-width: 120px;
+            font-size: 0.9rem;
+        }
+
+        .secondary-btn:hover {
+            background: var(--bg-primary);
+            border-color: var(--primary-color);
+        }
+
+        /* Game setup modal */
+        #game-setup-modal .time-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .time-option {
+            padding: 20px 10px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            text-align: center;
+        }
+
+        .time-option:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-md);
+        }
+
+        .time-option.selected {
+            border-color: var(--primary-color);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            box-shadow: var(--shadow-md);
+        }
+
+        .time-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .time-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
 
         /* Responsive Design */
@@ -1124,7 +1333,7 @@
         </div>
         <div class="header-content">
             <img src="images/chess.svg" alt="Chess Logo" class="chess-logo">
-            <h1>Chess Master</h1>
+            <h1>Chess Master Pro</h1>
             <div class="subtitle">Experience the ultimate chess game</div>
         </div>
     </header>
@@ -1133,6 +1342,38 @@
         <div class="game-sidebar">
             <div class="game-info">
                 <div id="status" class="status-indicator">Current Turn: White</div>
+
+                <!-- Timer displays -->
+                <div class="timers-container">
+                    <div class="player-timer white">
+                        <div class="timer-label">White</div>
+                        <div id="white-timer" class="timer-display">05:00</div>
+                    </div>
+                    <div class="player-timer black">
+                        <div class="timer-label">Black</div>
+                        <div id="black-timer" class="timer-display">05:00</div>
+                    </div>
+                </div>
+
+                <!-- Timer controls -->
+                <div class="timer-controls">
+                    <button id="pause-timer-btn" class="btn secondary-btn">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <rect x="6" y="4" width="4" height="16"></rect>
+                            <rect x="14" y="4" width="4" height="16"></rect>
+                        </svg>
+                        Pause
+                    </button>
+                    <button id="resume-timer-btn" class="btn secondary-btn" style="display: none;">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                             stroke-width="2">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Resume
+                    </button>
+                </div>
+
                 <button id="new-game-btn" class="btn primary-btn">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
@@ -1216,120 +1457,322 @@
             </div>
         </div>
     </div>
+
+    <!-- Game Setup Modal -->
+    <div id="game-setup-modal" class="modal">
+        <div class="modal-overlay"></div>
+        <div class="modal-content">
+            <h3>New Game</h3>
+            <p style="margin-bottom: 20px;">Select time control for both players:</p>
+
+            <div class="time-options">
+                <div class="time-option" data-time="1">
+                    <div class="time-value">1:00</div>
+                    <div class="time-label">Bullet</div>
+                </div>
+                <div class="time-option" data-time="3">
+                    <div class="time-value">3:00</div>
+                    <div class="time-label">Blitz</div>
+                </div>
+                <div class="time-option selected" data-time="5">
+                    <div class="time-value">5:00</div>
+                    <div class="time-label">Blitz</div>
+                </div>
+                <div class="time-option" data-time="10">
+                    <div class="time-value">10:00</div>
+                    <div class="time-label">Rapid</div>
+                </div>
+                <div class="time-option" data-time="15">
+                    <div class="time-value">15:00</div>
+                    <div class="time-label">Rapid</div>
+                </div>
+                <div class="time-option" data-time="30">
+                    <div class="time-value">30:00</div>
+                    <div class="time-label">Classical</div>
+                </div>
+            </div>
+
+            <button id="start-game-btn" class="btn primary-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                Start Game
+            </button>
+        </div>
+    </div>
 </div>
 
 <script>
+    // Chess Timer functionality
+    let timerInterval = null;
+    let selectedTimeMinutes = 5; // Default time control (5 minutes)
+    let timersPaused = false;
+
+    // Function to format time in MM:SS
+    function formatTime(timeInSeconds) {
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = timeInSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    // Function to update timers based on game status
+    function updateTimers(gameStatus) {
+        if (!gameStatus) return;
+
+        const whiteTimer = document.getElementById('white-timer');
+        const blackTimer = document.getElementById('black-timer');
+        const whiteTimerContainer = document.querySelector('.player-timer.white');
+        const blackTimerContainer = document.querySelector('.player-timer.black');
+
+        // Remove active class from both timers
+        whiteTimerContainer.classList.remove('active');
+        blackTimerContainer.classList.remove('active');
+
+        // Update timer displays
+        if (gameStatus.whiteTime) {
+            whiteTimer.textContent = gameStatus.whiteTime;
+        }
+
+        if (gameStatus.blackTime) {
+            blackTimer.textContent = gameStatus.blackTime;
+        }
+
+        // Highlight active timer based on current turn
+        if (gameStatus.currentTurn === 'white') {
+            whiteTimerContainer.classList.add('active');
+        } else if (gameStatus.currentTurn === 'black') {
+            blackTimerContainer.classList.add('active');
+        }
+
+        // Check for low time (less than 30 seconds) and add warning class
+        const whiteTimeArray = gameStatus.whiteTime.split(':');
+        const blackTimeArray = gameStatus.blackTime.split(':');
+
+        const whiteTimeSeconds = parseInt(whiteTimeArray[0]) * 60 + parseInt(whiteTimeArray[1]);
+        const blackTimeSeconds = parseInt(blackTimeArray[0]) * 60 + parseInt(blackTimeArray[1]);
+
+        if (whiteTimeSeconds < 30) {
+            whiteTimerContainer.classList.add('low-time');
+        } else {
+            whiteTimerContainer.classList.remove('low-time');
+        }
+
+        if (blackTimeSeconds < 30) {
+            blackTimerContainer.classList.add('low-time');
+        } else {
+            blackTimerContainer.classList.remove('low-time');
+        }
+    }
+
+    // Function to start polling for timer updates
+    function startTimerPoll() {
+        if (timerInterval) {
+            clearInterval(timerInterval);
+        }
+
+        // Poll game status every second to update timers
+        timerInterval = setInterval(() => {
+            if (!timersPaused) {
+                fetch('/api/v1/chess/status')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error! Status: ${response.status}`);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        updateTimers(data);
+
+                        // Check for game over
+                        if (data.isGameOver) {
+                            clearInterval(timerInterval);
+
+                            // Display result if there's a timeout
+                            if (data.result && data.result.includes('lost on time')) {
+                                const gameResult = document.getElementById('game-result');
+                                if (gameResult) {
+                                    gameResult.textContent = data.result;
+                                    gameResult.classList.remove('hidden');
+                                }
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error updating timers:', error);
+                    });
+            }
+        }, 1000);
+    }
+
     // Check if the new game button exists
     window.addEventListener('DOMContentLoaded', () => {
         const newGameBtn = document.getElementById('new-game-btn');
+        const gameSetupModal = document.getElementById('game-setup-modal');
+        const timeOptions = document.querySelectorAll('.time-option');
+        const startGameBtn = document.getElementById('start-game-btn');
+        const pauseTimerBtn = document.getElementById('pause-timer-btn');
+        const resumeTimerBtn = document.getElementById('resume-timer-btn');
+
         if (newGameBtn) {
-
-            // Handle button click
+            // Show game setup modal when clicking New Game
             newGameBtn.addEventListener('click', () => {
-                // Visual feedback that the button was clicked
-                newGameBtn.classList.add('loading');
-                newGameBtn.innerHTML = '<span class="spinner"></span> Starting...';
-
-                // Clear existing moves and captured pieces
-                document.getElementById('moves-list').innerHTML = '';
-                document.getElementById('white-captured').innerHTML = '';
-                document.getElementById('black-captured').innerHTML = '';
-
-                // Fix for potential CORS issues - add absolute URL
-                const baseUrl = window.location.origin;
-
-                // Check if API endpoints are accessible
-                fetch(`${baseUrl}/api/v1/chess/new-game`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
-                    credentials: 'same-origin'
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-
-                        return fetch(`${baseUrl}/api/v1/chess/board`, {
-                            headers: {
-                                'Accept': 'application/json'
-                            },
-                            credentials: 'same-origin'
-                        });
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(boardData => {
-                        // Hide game result if visible
-                        document.getElementById('game-result').classList.add('hidden');
-
-                        return fetch(`${baseUrl}/api/v1/chess/status`, {
-                            headers: {
-                                'Accept': 'application/json'
-                            },
-                            credentials: 'same-origin'
-                        });
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
-                        }
-                        return response.json();
-                    })
-                    .then(statusData => {
-                        newGameBtn.classList.remove('loading');
-                        newGameBtn.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                                <path d="M21 3v5h-5"/>
-                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                                <path d="M3 21v-5h5"/>
-                            </svg>
-                            New Game
-                        `;
-
-                        // Update status with animation
-                        const statusElement = document.getElementById('status');
-                        statusElement.classList.add('status-update');
-                        statusElement.textContent = `Current Turn: ${statusData.currentPlayer || 'White'}`;
-                        setTimeout(() => {
-                            statusElement.classList.remove('status-update');
-                        }, 500);
-                    })
-                    .catch(error => {
-                        newGameBtn.classList.remove('loading');
-                        newGameBtn.innerHTML = `
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
-                                <path d="M21 3v5h-5"/>
-                                <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
-                                <path d="M3 21v-5h5"/>
-                            </svg>
-                            New Game
-                        `;
-
-                        // Show error notification
-                        const gameResult = document.getElementById('game-result');
-                        gameResult.textContent = `Error: ${error.message}`;
-                        gameResult.classList.remove('hidden');
-                        gameResult.classList.add('error');
-                    });
+                if (gameSetupModal) {
+                    gameSetupModal.classList.add('active');
+                }
             });
+
+            // Time option selection
+            timeOptions.forEach(option => {
+                option.addEventListener('click', () => {
+                    // Remove selected class from all options
+                    timeOptions.forEach(opt => opt.classList.remove('selected'));
+
+                    // Add selected class to clicked option
+                    option.classList.add('selected');
+
+                    // Update selected time
+                    selectedTimeMinutes = parseInt(option.dataset.time, 10);
+                });
+            });
+
+            // Start game with selected time
+            if (startGameBtn) {
+                startGameBtn.addEventListener('click', () => {
+                    // Hide modal
+                    gameSetupModal.classList.remove('active');
+
+                    // Show loading state
+                    startGameBtn.classList.add('loading');
+                    startGameBtn.innerHTML = '<span class="spinner"></span> Starting...';
+
+                    // Format time displays
+                    const whiteTimer = document.getElementById('white-timer');
+                    const blackTimer = document.getElementById('black-timer');
+
+                    const formattedTime = formatTime(selectedTimeMinutes * 60);
+                    if (whiteTimer) whiteTimer.textContent = formattedTime;
+                    if (blackTimer) blackTimer.textContent = formattedTime;
+
+                    // Clear existing moves and captured pieces
+                    document.getElementById('moves-list').innerHTML = '';
+                    document.getElementById('white-captured').innerHTML = '';
+                    document.getElementById('black-captured').innerHTML = '';
+
+                    // Reset timer controls
+                    timersPaused = false;
+                    if (pauseTimerBtn) pauseTimerBtn.style.display = 'inline-flex';
+                    if (resumeTimerBtn) resumeTimerBtn.style.display = 'none';
+
+                    // Start new game with selected time
+                    fetch('/api/v1/chess/new-game', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            timeMinutes: selectedTimeMinutes
+                        })
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+
+                            return fetch('/api/v1/chess/board');
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(boardData => {
+                            // Hide game result if visible
+                            document.getElementById('game-result').classList.add('hidden');
+
+                            return fetch('/api/v1/chess/status');
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then(statusData => {
+                            startGameBtn.classList.remove('loading');
+                            startGameBtn.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Start Game
+                        `;
+
+                            // Update status with animation
+                            const statusElement = document.getElementById('status');
+                            statusElement.classList.add('status-update');
+                            statusElement.textContent = `Current Turn: ${statusData.currentTurn || 'White'}`;
+                            setTimeout(() => {
+                                statusElement.classList.remove('status-update');
+                            }, 500);
+
+                            // Start timer polling
+                            startTimerPoll();
+                        })
+                        .catch(error => {
+                            startGameBtn.classList.remove('loading');
+                            startGameBtn.innerHTML = `
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                            </svg>
+                            Start Game
+                        `;
+
+                            // Show error notification
+                            const gameResult = document.getElementById('game-result');
+                            gameResult.textContent = `Error: ${error.message}`;
+                            gameResult.classList.remove('hidden');
+                            gameResult.classList.add('error');
+                        });
+                });
+            }
 
             // Make sure the button is visible and enabled
             newGameBtn.style.display = 'inline-flex';
             newGameBtn.disabled = false;
         }
+
+        // Pause/Resume timer functionality
+        if (pauseTimerBtn && resumeTimerBtn) {
+            pauseTimerBtn.addEventListener('click', () => {
+                fetch('/api/v1/chess/timer/pause', {method: 'POST'})
+                    .then(response => {
+                        if (response.ok) {
+                            timersPaused = true;
+                            pauseTimerBtn.style.display = 'none';
+                            resumeTimerBtn.style.display = 'inline-flex';
+                            return response.json();
+                        }
+                    })
+                    .catch(error => console.error('Error pausing timer:', error));
+            });
+
+            resumeTimerBtn.addEventListener('click', () => {
+                fetch('/api/v1/chess/timer/resume', {method: 'POST'})
+                    .then(response => {
+                        if (response.ok) {
+                            timersPaused = false;
+                            pauseTimerBtn.style.display = 'inline-flex';
+                            resumeTimerBtn.style.display = 'none';
+                            return response.json();
+                        }
+                    })
+                    .catch(error => console.error('Error resuming timer:', error));
+            });
+        }
     });
 
     // Listen for move events from the chess.js script
-    document.addEventListener('chess-move', function(e) {
+    document.addEventListener('chess-move', function (e) {
         if (e.detail && e.detail.notation) {
             // If a piece was captured
             if (e.detail.capturedPiece) {

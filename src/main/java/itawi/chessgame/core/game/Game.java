@@ -2,6 +2,7 @@ package itawi.chessgame.core.game;
 
 import itawi.chessgame.core.board.Board;
 import itawi.chessgame.core.piece.*;
+import itawi.chessgame.core.timer.ChessTimer;
 import itawi.chessgame.core.util.Utils;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,13 +21,23 @@ public class Game {
     @Setter
     private int halfMoveCounter; // Counter for the 50-move rule
 
+    private final ChessTimer timer; // Chess timer for the game
+    private String timeoutPlayer; // Player who ran out of time, if any
+
     public Game() {
+        this(5); // Default to 5 minutes per player
+    }
+
+    public Game(int timeMinutes) {
         this.board = new Board();
         this.currentTurn = "white"; // White starts first
         this.isGameOver = false;
         boardStateHistory = new ArrayList<>();
         this.halfMoveCounter = 0; // Initialize the counter
+        this.timer = new ChessTimer(timeMinutes);
+        this.timeoutPlayer = null;
     }
+
     // Constructor for testing purposes
     public Game(String currentTurn) {
         this.board = new Board();
@@ -34,12 +45,21 @@ public class Game {
         this.isGameOver = false;
         boardStateHistory = new ArrayList<>();
         this.halfMoveCounter = 0; // Initialize the counter
+        this.timer = new ChessTimer(5); // Default 5 minutes
+        this.timeoutPlayer = null;
     }
 
     public boolean makeMove(String fromPosition, String toPosition) {
         if (isGameOver) {
             return false; // Game is already over
         }
+
+        // Check for timeout before making move
+        checkForTimeout();
+        if (isGameOver) {
+            return false; // Game ended due to timeout
+        }
+
         // Attempt to move the piece
         Piece piece = board.getPieceAt(fromPosition);
 
@@ -53,20 +73,14 @@ public class Game {
             return false;
         }
 
-
-        // Check if it's the correct player's turn
-        if (!piece.getColor().equals(currentTurn)) {
-            return false;
+        // Check if the piece belongs to the current player
+        if (!piece.getColor().equalsIgnoreCase(currentTurn)) {
+            return false; // Not this player's turn
         }
 
-        // Check if en passant
-        boolean isEnPassant = piece instanceof Pawn && toPosition.equals(board.getEnPassantTarget());
-
-        // Get valid moves directly from the piece using the Board object
-        List<String> validMoves = piece.getPossibleMoves(board);
-
-        if (!validMoves.contains(toPosition)) {
-            return false;
+        // Start the game timer when first move is made
+        if (!timer.isTimerRunning()) {
+            timer.startTimer();
         }
 
         // Simulate the move to check if it would leave the king in check
@@ -84,6 +98,7 @@ public class Game {
         }
 
         // If en passant, also remove the captured pawn from simulation
+        boolean isEnPassant = piece instanceof Pawn && toPosition.equals(board.getEnPassantTarget());
         if (isEnPassant) {
             int[] toCoords = Utils.getCoordinates(toPosition);
             int capturedY = piece.getColor().equals("white") ? toCoords[1] - 1 : toCoords[1] + 1;
@@ -185,10 +200,27 @@ public class Game {
             isGameOver = true;
         }
 
+        // Update the timer after a successful move
+        timer.switchTurn();
+
         return true;
     }
 
+    private void checkForTimeout() {
+        if (timer.isTimeout()) {
+            isGameOver = true;
+            timeoutPlayer = currentTurn;
+            System.out.println("Time's up! " + (currentTurn.equals("white") ? "Black" : "White") + " wins!");
+        }
+    }
+
     private boolean isCheckmate() {
+        // First check for timeout
+        checkForTimeout();
+        if (isGameOver && timeoutPlayer != null) {
+            return false; // Game ended due to timeout, not checkmate
+        }
+
         // Check if the current player's king is in check
         if (!board.isKingInCheck(currentTurn, board.getBoardState())) {
             return false; // Not in check, so not checkmate
