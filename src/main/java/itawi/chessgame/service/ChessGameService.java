@@ -24,6 +24,7 @@ public class ChessGameService {
 
     /**
      * Create a new game with specified time for each player
+     *
      * @param timeMinutes Time in minutes for each player
      */
     public void newGame(int timeMinutes) {
@@ -108,13 +109,20 @@ public class ChessGameService {
 
         status.put("inCheck", inCheck);
 
-        // Add timer information
-        String whiteTime = currentGame.getTimer().getFormattedTime("white");
-        String blackTime = currentGame.getTimer().getFormattedTime("black");
         String timeoutPlayer = currentGame.getTimeoutPlayer();
-        status.put("whiteTime", whiteTime);
-        status.put("blackTime", blackTime);
-        status.put("timerRunning", currentGame.getTimer().isTimerRunning());
+        // Add timer information
+        if (currentGame.getTimer() == null) {
+            status.put("timerRunning", false);
+            status.put("whiteTime", "00:00");
+            status.put("blackTime", "00:00");
+            status.put("result", "Game has not started yet");
+        } else {
+            String whiteTime = currentGame.getTimer().getFormattedTime("white");
+            String blackTime = currentGame.getTimer().getFormattedTime("black");
+            status.put("whiteTime", whiteTime);
+            status.put("blackTime", blackTime);
+            status.put("timerRunning", currentGame.getTimer().isTimerRunning());
+        }
 
         if (isGameOver()) {
             if (timeoutPlayer != null) {
