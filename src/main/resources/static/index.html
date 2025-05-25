@@ -1862,16 +1862,6 @@
             });
         }
     });
-
-    // Listen for move events from the chess.js script
-    document.addEventListener('chess-move', function (e) {
-        if (e.detail && e.detail.notation) {
-            // If a piece was captured
-            if (e.detail.capturedPiece) {
-                addCapturedPiece(e.detail.capturedPiece, e.detail.capturedColor);
-            }
-        }
-    });
 </script>
 <script src="/js/chess.js?v=1.0.0"></script>
 </body>
