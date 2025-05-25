@@ -22,7 +22,7 @@ public class ChessGameController {
             // Start a new game with specified time control
             chessGameService.newGame(gameSettings.get("timeMinutes"));
         } else {
-            // Start new game with default time (5 minutes)
+            // Start a new game without time control
             chessGameService.newGame();
         }
         return ResponseEntity.ok().build();

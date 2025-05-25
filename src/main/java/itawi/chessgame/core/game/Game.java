@@ -24,10 +24,23 @@ public class Game {
     private final ChessTimer timer; // Chess timer for the game
     private String timeoutPlayer; // Player who ran out of time, if any
 
+    /**
+     * Default constructor creates a game without a timer
+     */
     public Game() {
-        this(5); // Default to 5 minutes per player
+        this.board = new Board();
+        this.currentTurn = "white"; // White starts first
+        this.isGameOver = false;
+        boardStateHistory = new ArrayList<>();
+        this.halfMoveCounter = 0; // Initialize the counter
+        this.timer = null; // No timer by default
+        this.timeoutPlayer = null;
     }
 
+    /**
+     * Creates a game with a timer set to the specified minutes
+     * @param timeMinutes Time in minutes for each player
+     */
     public Game(int timeMinutes) {
         this.board = new Board();
         this.currentTurn = "white"; // White starts first
@@ -79,7 +92,7 @@ public class Game {
         }
 
         // Start the game timer when first move is made
-        if (!timer.isTimerRunning()) {
+        if (timer != null && !timer.isTimerRunning()) {
             timer.startTimer();
         }
 
@@ -201,13 +214,15 @@ public class Game {
         }
 
         // Update the timer after a successful move
-        timer.switchTurn();
+        if (timer != null) {
+            timer.switchTurn();
+        }
 
         return true;
     }
 
     private void checkForTimeout() {
-        if (timer.isTimeout()) {
+        if (timer != null && timer.isTimeout()) {
             isGameOver = true;
             timeoutPlayer = currentTurn;
             System.out.println("Time's up! " + (currentTurn.equals("white") ? "Black" : "White") + " wins!");
