@@ -8,6 +8,7 @@ import itawi.chessgame.core.util.Utils;
 import itawi.chessgame.dto.PieceDTO;
 import lombok.Getter;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -17,7 +18,7 @@ import java.util.HashMap;
 
 @Service
 @Getter
-@Scope(WebApplicationContext.SCOPE_SESSION)
+@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class ChessGameService {
     private Game currentGame;
 
