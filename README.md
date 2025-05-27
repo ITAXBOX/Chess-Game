@@ -95,6 +95,7 @@ src/
   │   │           ├── core/
   │   │           │   ├── board/
   │   │           │   ├── enums/
+  |   |           |   ├── exception/
   │   │           │   ├── game/
   │   │           │   ├── piece/
   │   │           │   ├── timer/
