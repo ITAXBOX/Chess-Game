@@ -7,7 +7,9 @@ import itawi.chessgame.core.piece.Piece;
 import itawi.chessgame.core.util.Utils;
 import itawi.chessgame.dto.PieceDTO;
 import lombok.Getter;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import java.util.HashMap;
 
 @Service
 @Getter
+@Scope(WebApplicationContext.SCOPE_SESSION)
 public class ChessGameService {
     private Game currentGame;
 
